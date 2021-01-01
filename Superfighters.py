@@ -16,7 +16,7 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Superfighters")
 
 # Images
-player_still_image_right= pygame.image.load("standright_1.png").convert()
+player_still_image_right = pygame.image.load("standright_1.png").convert()
 player_still_image_right = pygame.transform.scale(player_still_image_right, (37, 63))
 player_still_image_left = pygame.image.load("standleft_1.png").convert()
 player_still_image_left = pygame.transform.scale(player_still_image_left, (37, 63))
@@ -40,33 +40,32 @@ class Player(pygame.sprite.Sprite):
         self.image = player_still_image_right
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        # Programe not registering self.rect. values at all
-        self.rect.x = 305
-        self.rect.y = 15
+        # Programme not registering self.rect. values at all
+        self.rect.x = 100
+        self.rect.y = 100
         self.walkanimationnum = 0
         self.state = "still"
-        # direction will be used to decide which image should be used when moving/ standing in different directions
+        # direction will be used to decide which image should be used when moving/standing in different directions
         self.direction = "right"
-        self.xspeed = 0
+        self.speedx = 0
 
-    def update(self, speed, timer):
-        self.rect.x += speed
-        if speed == 5 or speed == -5:
+    def update(self, timer):
+        self.rect.x = self.rect.x + self.speedx
+        if self.speedx == 5 or self.speedx == -5:
             if timer % 15 == 0:
                 self.walkanimationnum += 1
                 if self.walkanimationnum == 2:
                     self.walkanimationnum = 0
-            if speed == 5:
+            if self.speedx == 5:
                 self.image = walkright[self.walkanimationnum]
-            if speed == -5:
+            if self.speedx == -5:
                 self.image = walkleft[self.walkanimationnum]
-        elif speed == 0:
+        elif self.speedx == 0:
             if self.direction == "right":
                 self.image = player_still_image_right
             elif self.direction == "left":
                 self.image = player_still_image_left
         self.image.set_colorkey(BLACK)
-        self.rect = self.image.get_rect()
 
     #def fall(self):
 
@@ -79,7 +78,6 @@ all_sprites_list = pygame.sprite.Group()
 # Adding Objects to sprite lists
 all_sprites_list.add(player1)
 # variables
-player1_x_speed = 0
 timer = 0
 # Loop until the user clicks the close button.
 done = False
@@ -97,22 +95,21 @@ while not done:
     # --- Game logic should go here
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player1_x_speed = -5
+                player1.speedx = -5
                 player1.state = "walk"
                 player1.direction = "left"
             elif event.key == pygame.K_RIGHT:
-                player1_x_speed = 5
+                player1.speedx = 5
                 player1.state = "walk"
                 player1.direction = "right"
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
-                player1_x_speed = 0
+                player1.speedx = 0
                 player1.state = "still"
             elif event.key == pygame.K_RIGHT:
-                player1_x_speed = 0
+                player1.speedx = 0
                 player1.state = "still"
-    player1.update(player1_x_speed, timer)
-
+    player1.update(timer)
 
     screen.fill(WHITE)
     
