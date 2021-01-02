@@ -7,7 +7,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
- 
+GREY = (128, 128, 128)
 pygame.init()
  
 # Set the screen up
@@ -26,13 +26,13 @@ player_still_image_right = pygame.transform.scale(player_still_image_right, (37,
 player_still_image_left = pygame.image.load("standleft_1.png")
 player_still_image_left = pygame.transform.scale(player_still_image_left, (37, 63))
 player_walk_right1 = pygame.image.load("walkright_1.png")
-player_walk_right1 = pygame.transform.scale(player_walk_right1, (42, 60))
+player_walk_right1 = pygame.transform.scale(player_walk_right1, (42, 63))
 player_walk_right2 = pygame.image.load("walkright_3.png")
-player_walk_right2 = pygame.transform.scale(player_walk_right2, (48, 60))
+player_walk_right2 = pygame.transform.scale(player_walk_right2, (42, 63))
 player_walk_left1 = pygame.image.load("walkleft_1.png")
-player_walk_left1 = pygame.transform.scale(player_walk_left1, (42, 60))
+player_walk_left1 = pygame.transform.scale(player_walk_left1, (42, 63))
 player_walk_left2 = pygame.image.load("walkleft_3.png")
-player_walk_left2 = pygame.transform.scale(player_walk_left2, (42, 60))
+player_walk_left2 = pygame.transform.scale(player_walk_left2, (42, 63))
 
 # Fonts
 font = pygame.font.Font(None, 50)
@@ -54,9 +54,22 @@ class Player(pygame.sprite.Sprite):
         # direction will be used to decide which image should be used when moving/standing in different directions
         self.direction = "right"
         self.speedx = 0
+        self.speedy = 0
+        self.supported = False
+        #Supported decides whether or not to make the player fall
+        self.accy = 0.163
+        self.accx = 0
+        # 9.8 / 60, to model realistic acceleration
 
     def update(self, timer):
+        # Update sideways movement
         self.rect.x = self.rect.x + self.speedx
+        # Update whether player is falling or not
+        if not self.supported:
+            self.accy = .163
+        elif self.supported:
+            self.accy = 0
+        # Walking animation
         if self.speedx == 5 or self.speedx == -5:
             if timer % 15 == 0:
                 self.walkanimationnum += 1
@@ -66,12 +79,35 @@ class Player(pygame.sprite.Sprite):
                 self.image = walkright[self.walkanimationnum]
             if self.speedx == -5:
                 self.image = walkleft[self.walkanimationnum]
+        # Reset sprites if no longer moving
         elif self.speedx == 0:
             if self.direction == "right":
                 self.image = player_still_image_right
             elif self.direction == "left":
                 self.image = player_still_image_left
+        # Acceleration and downwards moving if falling
+        if self.supported == False:
+            self.speedy += self.accy
+            self.rect.y += self.speedy
+        # Check if floor has been hit
+        player_floor_collision_list = pygame.sprite.spritecollide(self, floors, False)
+        # If it has and player was falling, stop falling and place player on top of floor
+        if player_floor_collision_list and self.speedy > 0:
+            self.speedy = 0
+            self.supported = True
+            for floor in player_floor_collision_list:
+                # + 63 to adjust for player height
+                self.rect.y = (floor.rect.y - 63)
         self.image.set_colorkey(BLACK)
+
+class Hardfloor(pygame.sprite.Sprite):
+    def __init__(self, xsize, ysize, xcoord, ycoord):
+        super().__init__()
+        self.image = pygame.Surface((xsize, ysize))
+        self.image.fill(GREY)
+        self.rect = self.image.get_rect()
+        self.rect.x = xcoord
+        self.rect.y = ycoord
 
 class Titleimage(pygame.sprite.Sprite):
     def __init__(self):
@@ -87,8 +123,12 @@ class Titleimage(pygame.sprite.Sprite):
 # Instantiate Objects
 player1 = Player()
 titlepic = Titleimage()
+map1floor = Hardfloor(1000, 100, 0, 650)
 # Set up sprite lists
 all_sprites_list = pygame.sprite.Group()
+floors = pygame.sprite.Group()
+hard_floors = pygame.sprite.Group()
+
 
 # Adding Objects to sprite lists
 # all_sprites_list.add(player1)
@@ -122,12 +162,17 @@ while not done:
                 Menu = False
                 Multiplayer = True
                 Setup = True
+                Map1 = True
+                #Set Map1 to true so that i can develop the first map, there will be the option to choose a map late ron
     if Multiplayer:
         if Setup:
             Setup = False
             all_sprites_list.empty()
             all_sprites_list.add(player1)
-
+            hard_floors.add(map1floor)
+            floors.add(map1floor)
+            if Map1:
+                all_sprites_list.add(map1floor)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 player1.speedx = -5
@@ -161,5 +206,3 @@ while not done:
     pygame.display.flip()
 # Close the window and quit.
 pygame.quit()
-
-
