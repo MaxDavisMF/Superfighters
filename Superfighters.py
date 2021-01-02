@@ -33,6 +33,10 @@ player_walk_left1 = pygame.image.load("walkleft_1.png")
 player_walk_left1 = pygame.transform.scale(player_walk_left1, (42, 63))
 player_walk_left2 = pygame.image.load("walkleft_3.png")
 player_walk_left2 = pygame.transform.scale(player_walk_left2, (42, 63))
+player_jump_right = pygame.image.load("jumpright.png")
+player_jump_right = pygame.transform.scale(player_jump_right, (42, 63))
+player_jump_left = pygame.image.load("jumpleft.png")
+player_jump_left = pygame.transform.scale(player_jump_left, (42, 63))
 
 # Fonts
 font = pygame.font.Font(None, 50)
@@ -66,11 +70,11 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.rect.x + self.speedx
         # Update whether player is falling or not
         if not self.supported:
-            self.accy = .163
+            self.accy = 0.163
         elif self.supported:
             self.accy = 0
         # Walking animation
-        if self.speedx == 5 or self.speedx == -5:
+        if self.state == "walk":
             if timer % 15 == 0:
                 self.walkanimationnum += 1
                 if self.walkanimationnum == 2:
@@ -80,11 +84,17 @@ class Player(pygame.sprite.Sprite):
             if self.speedx == -5:
                 self.image = walkleft[self.walkanimationnum]
         # Reset sprites if no longer moving
-        elif self.speedx == 0:
+        elif self.state == "still":
             if self.direction == "right":
                 self.image = player_still_image_right
             elif self.direction == "left":
                 self.image = player_still_image_left
+        # Jump sprite
+        elif self.state == "jump":
+            if self.direction == "right":
+                self.image = player_jump_right
+            elif self.direction== "left":
+                self.image= player_jump_left
         # Acceleration and downwards moving if falling
         if self.supported == False:
             self.speedy += self.accy
@@ -95,6 +105,10 @@ class Player(pygame.sprite.Sprite):
         if player_floor_collision_list and self.speedy > 0:
             self.speedy = 0
             self.supported = True
+            if self.speedx != 0:
+                self.state = "walk"
+            else:
+                self.state = "still"
             for floor in player_floor_collision_list:
                 # + 63 to adjust for player height
                 self.rect.y = (floor.rect.y - 63)
@@ -182,6 +196,10 @@ while not done:
                 player1.speedx = 5
                 player1.state = "walk"
                 player1.direction = "right"
+            elif event.key == pygame.K_UP and player1.supported == True:
+                player1.speedy = -4
+                player1.supported = False
+                player1.state = "jump"
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 player1.speedx = 0
