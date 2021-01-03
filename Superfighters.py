@@ -1,4 +1,3 @@
-
 # Import Libraries
 import pygame
 import random
@@ -42,6 +41,10 @@ player_duck_left = pygame.image.load("duckleft.png")
 player_duck_left = pygame.transform.scale(player_duck_left, (33, 45))
 player_duck_right = pygame.image.load("duckright.png")
 player_duck_right = pygame.transform.scale(player_duck_right, (33, 45))
+player_pistol_right = pygame.image.load("pistolaimright.png")
+player_pistol_right = pygame.transform.scale(player_pistol_right, (50, 63))
+player_pistol_left = pygame.image.load("pistolaimleft.png")
+player_pistol_left = pygame.transform.scale(player_pistol_left,  (50, 63))
 # Fonts
 font = pygame.font.Font(None, 50)
 
@@ -72,62 +75,75 @@ class Player(pygame.sprite.Sprite):
         self.uncrouching = False
         # Used to decide if player is crouching or uncrouching (changing state) to adjust coords of sprite. Crouching set to True as next time it is used the sprite will be crouching
         self.crouched = False
+        #Was crocuhed used to readjust sprite location if crouching after shooting
+        self.wascrouched = False
+        self.health = 100
+        self.gun = "pistol"
+        self.shooting = False
+
 
     def update(self, timer):
-        if self.crouched == True:
-            self.speedx = 0
-        # Update sideways movement
-        self.rect.x = self.rect.x + self.speedx
-        # Update whether player is falling or not
-        if not self.supported:
-            self.accy = 0.163
-        elif self.supported:
-            self.accy = 0
-        # Walking animation
-        if self.state == "walk":
-            if timer % 15 == 0:
-                self.walkanimationnum += 1
-                if self.walkanimationnum == 2:
-                    self.walkanimationnum = 0
-            if self.speedx == 5:
-                self.image = walkright[self.walkanimationnum]
-            if self.speedx == -5:
-                self.image = walkleft[self.walkanimationnum]
-        # Reset sprites if no longer moving
-        elif self.state == "still":
+        if self.shooting == False:
+            if self.crouched == True:
+                self.speedx = 0
+            # Update sideways movement
+            self.rect.x = self.rect.x + self.speedx
+            # Update whether player is falling or not
+            if not self.supported:
+                self.accy = 0.163
+            elif self.supported:
+                self.accy = 0
+            # Walking animation
+            if self.state == "walk":
+                if timer % 15 == 0:
+                    self.walkanimationnum += 1
+                    if self.walkanimationnum == 2:
+                        self.walkanimationnum = 0
+                if self.speedx == 5:
+                    self.image = walkright[self.walkanimationnum]
+                if self.speedx == -5:
+                    self.image = walkleft[self.walkanimationnum]
+            # Reset sprites if no longer moving
+            elif self.state == "still":
+                if self.direction == "right":
+                    self.image = player_still_image_right
+                elif self.direction == "left":
+                    self.image = player_still_image_left
+            # Crouch sprite if crouching
+            elif self.state == "crouched":
+                if self.direction == "right":
+                    self.image = player_duck_right
+                elif self.direction == "left":
+                    self.image = player_duck_left
+            # Jump sprite
+            elif self.state == "jump":
+                if self.direction == "right":
+                    self.image = player_jump_right
+                elif self.direction== "left":
+                    self.image= player_jump_left
+            # Acceleration and downwards moving if falling
+            if self.supported == False:
+                self.speedy += self.accy
+                self.rect.y += self.speedy
+            # Check if floor has been hit
+            player_floor_collision_list = pygame.sprite.spritecollide(self, floors, False)
+            # If it has and player was falling, stop falling and place player on top of floor
+            if player_floor_collision_list and self.speedy > 0:
+                self.speedy = 0
+                self.supported = True
+                if self.speedx != 0:
+                    self.state = "walk"
+                else:
+                    self.state = "still"
+                for floor in player_floor_collision_list:
+                    # + 63 to adjust for player height
+                    self.rect.y = (floor.rect.y - 63)
+
+        elif self.shooting == True:
             if self.direction == "right":
-                self.image = player_still_image_right
+                self.image = player_pistol_right
             elif self.direction == "left":
-                self.image = player_still_image_left
-        # Crouch sprite if crouching
-        elif self.state == "crouched":
-            if self.direction == "right":
-                self.image = player_duck_right
-            elif self.direction == "left":
-                self.image = player_duck_left
-        # Jump sprite
-        elif self.state == "jump":
-            if self.direction == "right":
-                self.image = player_jump_right
-            elif self.direction== "left":
-                self.image= player_jump_left
-        # Acceleration and downwards moving if falling
-        if self.supported == False:
-            self.speedy += self.accy
-            self.rect.y += self.speedy
-        # Check if floor has been hit
-        player_floor_collision_list = pygame.sprite.spritecollide(self, floors, False)
-        # If it has and player was falling, stop falling and place player on top of floor
-        if player_floor_collision_list and self.speedy > 0:
-            self.speedy = 0
-            self.supported = True
-            if self.speedx != 0:
-                self.state = "walk"
-            else:
-                self.state = "still"
-            for floor in player_floor_collision_list:
-                # + 63 to adjust for player height
-                self.rect.y = (floor.rect.y - 63)
+                self.image = player_pistol_left
         self.image.set_colorkey(BLACK)
 
 class Hardfloor(pygame.sprite.Sprite):
@@ -216,14 +232,26 @@ while not done:
                 player1.speedy = -5
                 player1.supported = False
                 player1.state = "jump"
-            elif event.key == pygame.K_DOWN and player1.supported == True:
+            elif event.key == pygame.K_DOWN and player1.supported == True and player1.shooting == False:
                 player1.state = "crouched"
                 player1.crouched = True
                 player1.uncrouching = True
                 if player1.crouching == True:
                     player1.rect.y += 18
                     player1.crouching = False
-                # FirstCrouch means first frame in which the player is crouched, so the programme knows to adjust the y coords of the player
+            elif event.key == pygame.K_n:
+                player1.shooting = True
+                # This is to adjust the coordinates of the player sprite so that he stands correctly
+                if player1.crouched == True:
+                    player1.crouched = False
+                    # Remember that the player was crocuhed
+                    player1.wascrouched = True
+                    # Adjust coords of player
+                    player1.rect.y -= 18
+                    # So that the player is not shifted up again if the player lets go of the down key
+                    player1.uncrouching = False
+                    #To readjust the sprite when the player stops shooting.
+                    player1.crouching = True
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT and player1.crouched == False:
                 player1.speedx = 0
@@ -235,10 +263,19 @@ while not done:
                 if player1.uncrouching == True:
                     player1.rect.y -= 18
                     player1.uncrouching = False
-                # Set speedy to 1 to trigger the coordinates of the standing sprite to be readjusted to the floor in the update function
                 player1.state = "still"
                 player1.crouching = True
                 player1.crouched = False
+                player1.wascrouched = False
+            elif event.key == pygame.K_n:
+                player1.shooting = False
+                if player1.wascrouched == True:
+                    if player1.crouching == True:
+                        player1.rect.y += 18
+                        player1.wascrouched = False
+                        player1.crouched = True
+                        player1.crouching = False
+                        player1.uncrouching = True
 
         player1.update(timer)
 
@@ -257,3 +294,5 @@ while not done:
     pygame.display.flip()
 # Close the window and quit.
 pygame.quit()
+
+
