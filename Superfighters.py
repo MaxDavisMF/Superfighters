@@ -1,3 +1,4 @@
+
 # Import Libraries
 import pygame
 import random
@@ -37,7 +38,10 @@ player_jump_right = pygame.image.load("jumpright.png")
 player_jump_right = pygame.transform.scale(player_jump_right, (42, 63))
 player_jump_left = pygame.image.load("jumpleft.png")
 player_jump_left = pygame.transform.scale(player_jump_left, (42, 63))
-
+player_duck_left = pygame.image.load("duckleft.png")
+player_duck_left = pygame.transform.scale(player_duck_left, (33, 45))
+player_duck_right = pygame.image.load("duckright.png")
+player_duck_right = pygame.transform.scale(player_duck_right, (33, 45))
 # Fonts
 font = pygame.font.Font(None, 50)
 
@@ -64,8 +68,14 @@ class Player(pygame.sprite.Sprite):
         self.accy = 0.163
         self.accx = 0
         # 9.8 / 60, to model realistic acceleration
+        self.crouching = True
+        self.uncrouching = False
+        # Used to decide if player is crouching or uncrouching (changing state) to adjust coords of sprite. Crouching set to True as next time it is used the sprite will be crouching
+        self.crouched = False
 
     def update(self, timer):
+        if self.crouched == True:
+            self.speedx = 0
         # Update sideways movement
         self.rect.x = self.rect.x + self.speedx
         # Update whether player is falling or not
@@ -89,6 +99,12 @@ class Player(pygame.sprite.Sprite):
                 self.image = player_still_image_right
             elif self.direction == "left":
                 self.image = player_still_image_left
+        # Crouch sprite if crouching
+        elif self.state == "crouched":
+            if self.direction == "right":
+                self.image = player_duck_right
+            elif self.direction == "left":
+                self.image = player_duck_left
         # Jump sprite
         elif self.state == "jump":
             if self.direction == "right":
@@ -188,25 +204,42 @@ while not done:
             if Map1:
                 all_sprites_list.add(map1floor)
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT and player1.crouched == False:
                 player1.speedx = -5
                 player1.state = "walk"
                 player1.direction = "left"
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_RIGHT and player1.crouched == False:
                 player1.speedx = 5
                 player1.state = "walk"
                 player1.direction = "right"
             elif event.key == pygame.K_UP and player1.supported == True:
-                player1.speedy = -4
+                player1.speedy = -5
                 player1.supported = False
                 player1.state = "jump"
+            elif event.key == pygame.K_DOWN and player1.supported == True:
+                player1.state = "crouched"
+                player1.crouched = True
+                player1.uncrouching = True
+                if player1.crouching == True:
+                    player1.rect.y += 18
+                    player1.crouching = False
+                # FirstCrouch means first frame in which the player is crouched, so the programme knows to adjust the y coords of the player
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT and player1.crouched == False:
                 player1.speedx = 0
                 player1.state = "still"
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_RIGHT and player1.crouched == False:
                 player1.speedx = 0
                 player1.state = "still"
+            elif event.key == pygame.K_DOWN:
+                if player1.uncrouching == True:
+                    player1.rect.y -= 18
+                    player1.uncrouching = False
+                # Set speedy to 1 to trigger the coordinates of the standing sprite to be readjusted to the floor in the update function
+                player1.state = "still"
+                player1.crouching = True
+                player1.crouched = False
+
         player1.update(timer)
 
         screen.blit(background_image, (0, 0))
