@@ -80,6 +80,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = xpos
         self.rect.y = ypos
+        self.health = 100
         self.walkanimationnum = 0
         self.state = "still"
         # direction will be used to decide which image should be used when moving/standing in different directions
@@ -161,12 +162,20 @@ class Player(pygame.sprite.Sprite):
                     # + 63 to adjust for player height
                     self.rect.y = (floor.rect.y - 63)
 
+
         elif self.shooting == True:
             if self.direction == "right":
                 self.image = player_pistol_right
             elif self.direction == "left":
                 self.image = player_pistol_left
         self.image.set_colorkey(BLACK)
+
+        Player_hit_list = pygame.sprite.spritecollide(self, bullet_sprite_list, False)
+        if Player_hit_list:
+            for bullet in Player_hit_list:
+                bullet.kill()
+                self.health -= 9
+
 
 class Hardfloor(pygame.sprite.Sprite):
     def __init__(self, xsize, ysize, xcoord, ycoord):
@@ -298,12 +307,13 @@ while not done:
                 if player1.aiming == True:
                     player1.aiming = False
                     if player1.direction == "right":
-                        bullet = Bullet((player1.rect.x + 50), (player1.rect.y + 9))
+                        # Coords adjusted a bit so that the bullet dies not collide with the player and dissapear straight away once created
+                        bullet = Bullet((player1.rect.x + 55), (player1.rect.y + 9))
                         bullet.direction = "right"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
                     elif player1.direction == "left":
-                        bullet = Bullet(player1.rect.x, player1.rect.y + 9)
+                        bullet = Bullet(player1.rect.x - 6, player1.rect.y + 9)
                         bullet.direction = "left"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
@@ -370,12 +380,13 @@ while not done:
                 if player2.aiming == True:
                     player2.aiming = False
                     if player2.direction == "right":
-                        bullet = Bullet((player2.rect.x + 50), (player2.rect.y + 9))
+                        # Coords adjusted a bit so that the bullet does not collide with the player straight away when created
+                        bullet = Bullet((player2.rect.x + 55), (player2.rect.y + 9))
                         bullet.direction = "right"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
                     elif player2.direction == "left":
-                        bullet = Bullet(player2.rect.x, player2.rect.y + 9)
+                        bullet = Bullet(player2.rect.x - 6, player2.rect.y + 9)
                         bullet.direction = "left"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
@@ -408,3 +419,4 @@ while not done:
     pygame.display.flip()
 # Close the window and quit.
 pygame.quit()
+
