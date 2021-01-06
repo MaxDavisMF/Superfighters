@@ -1,3 +1,4 @@
+
 # Import Libraries
 import pygame
 import random
@@ -52,14 +53,33 @@ font = pygame.font.Font(None, 50)
 walkright = [player_walk_right1, player_walk_right2]
 walkleft = [player_walk_left1, player_walk_left2]
 # Classes
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((6, 4))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.direction = "right"
+    def update(self):
+        if self.direction == "right":
+            self.rect.x = self.rect.x + 8
+        elif self.direction == "left":
+            self.rect.x -= 8
+        # This piece of code seems to make the bullet dissapear straight away, don't know what the bullet is colliding with
+        bullet_collision_list = pygame.sprite.spritecollide(self, obstacles, False)
+        if bullet_collision_list:
+            self.kill()
+
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, xpos, ypos):
         super().__init__()
         self.image = player_still_image_right
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.rect.x = 100
-        self.rect.y = 100
+        self.rect.x = xpos
+        self.rect.y = ypos
         self.walkanimationnum = 0
         self.state = "still"
         # direction will be used to decide which image should be used when moving/standing in different directions
@@ -80,6 +100,8 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.gun = "pistol"
         self.shooting = False
+        # Used to decide if the player was aiming when the n key is released, so that a bullet is not spawned every frame after it has been released
+        self.aiming = True
 
 
     def update(self, timer):
@@ -167,15 +189,16 @@ class Titleimage(pygame.sprite.Sprite):
 
 
 # Instantiate Objects
-player1 = Player()
+player1 = Player(900, 650)
+player2 = Player(100, 650)
 titlepic = Titleimage()
 map1floor = Hardfloor(1000, 100, 0, 650)
 # Set up sprite lists
 all_sprites_list = pygame.sprite.Group()
 floors = pygame.sprite.Group()
 hard_floors = pygame.sprite.Group()
-
-
+bullet_sprite_list = pygame.sprite.Group()
+obstacles = pygame.sprite.Group()
 # Adding Objects to sprite lists
 # all_sprites_list.add(player1)
 # variables
@@ -215,10 +238,13 @@ while not done:
             Setup = False
             all_sprites_list.empty()
             all_sprites_list.add(player1)
-            hard_floors.add(map1floor)
-            floors.add(map1floor)
+            all_sprites_list.add(player2)
+            all_sprites_list.add(map1floor)
             if Map1:
                 all_sprites_list.add(map1floor)
+                hard_floors.add(map1floor)
+                floors.add(map1floor)
+                obstacles.add(map1floor)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT and player1.crouched == False:
                 player1.speedx = -5
@@ -240,6 +266,7 @@ while not done:
                     player1.rect.y += 18
                     player1.crouching = False
             elif event.key == pygame.K_n:
+                player1.aiming = True
                 player1.shooting = True
                 # This is to adjust the coordinates of the player sprite so that he stands correctly
                 if player1.crouched == True:
@@ -268,6 +295,18 @@ while not done:
                 player1.crouched = False
                 player1.wascrouched = False
             elif event.key == pygame.K_n:
+                if player1.aiming == True:
+                    player1.aiming = False
+                    if player1.direction == "right":
+                        bullet = Bullet((player1.rect.x + 50), (player1.rect.y + 9))
+                        bullet.direction = "right"
+                        all_sprites_list.add(bullet)
+                        bullet_sprite_list.add(bullet)
+                    elif player1.direction == "left":
+                        bullet = Bullet(player1.rect.x, player1.rect.y + 9)
+                        bullet.direction = "left"
+                        all_sprites_list.add(bullet)
+                        bullet_sprite_list.add(bullet)
                 player1.shooting = False
                 if player1.wascrouched == True:
                     if player1.crouching == True:
@@ -277,7 +316,82 @@ while not done:
                         player1.crouching = False
                         player1.uncrouching = True
 
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a and player2.crouched == False:
+                player2.speedx = -5
+                player2.state = "walk"
+                player2.direction = "left"
+            elif event.key == pygame.K_d and player2.crouched == False:
+                player2.speedx = 5
+                player2.state = "walk"
+                player2.direction = "right"
+            elif event.key == pygame.K_w and player2.supported == True:
+                player2.speedy = -5
+                player2.supported = False
+                player2.state = "jump"
+            elif event.key == pygame.K_s and player2.supported == True and player2.shooting == False:
+                player2.state = "crouched"
+                player2.crouched = True
+                player2.uncrouching = True
+                if player2.crouching == True:
+                    player2.rect.y += 18
+                    player2.crouching = False
+            elif event.key == pygame.K_2:
+                player2.aiming = True
+                player2.shooting = True
+                # This is to adjust the coordinates of the player sprite so that he stands correctly
+                if player2.crouched == True:
+                    player2.crouched = False
+                    # Remember that the player was crocuhed
+                    player2.wascrouched = True
+                    # Adjust coords of player
+                    player2.rect.y -= 18
+                    # So that the player is not shifted up again if the player lets go of the down key
+                    player2.uncrouching = False
+                    #To readjust the sprite when the player stops shooting.
+                    player2.crouching = True
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_a and player2.crouched == False:
+                player2.speedx = 0
+                player2.state = "still"
+            elif event.key == pygame.K_d and player2.crouched == False:
+                player2.speedx = 0
+                player2.state = "still"
+            elif event.key == pygame.K_s:
+                if player2.uncrouching == True:
+                    player2.rect.y -= 18
+                    player2.uncrouching = False
+                player2.state = "still"
+                player2.crouching = True
+                player2.crouched = False
+                player2.wascrouched = False
+            elif event.key == pygame.K_2:
+                if player2.aiming == True:
+                    player2.aiming = False
+                    if player2.direction == "right":
+                        bullet = Bullet((player2.rect.x + 50), (player2.rect.y + 9))
+                        bullet.direction = "right"
+                        all_sprites_list.add(bullet)
+                        bullet_sprite_list.add(bullet)
+                    elif player2.direction == "left":
+                        bullet = Bullet(player2.rect.x, player2.rect.y + 9)
+                        bullet.direction = "left"
+                        all_sprites_list.add(bullet)
+                        bullet_sprite_list.add(bullet)
+                player2.shooting = False
+                if player2.wascrouched == True:
+                    if player2.crouching == True:
+                        player2.rect.y += 18
+                        player2.wascrouched = False
+                        player2.crouched = True
+                        player2.crouching = False
+                        player2.uncrouching = True
+
         player1.update(timer)
+        player2.update(timer)
+        for bullet in bullet_sprite_list:
+            bullet.update()
 
         screen.blit(background_image, (0, 0))
 
@@ -294,5 +408,3 @@ while not done:
     pygame.display.flip()
 # Close the window and quit.
 pygame.quit()
-
-
