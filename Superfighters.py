@@ -2,6 +2,7 @@
 # Import Libraries
 import pygame
 import random
+import decimal
 import math
 # Define some colors
 BLACK = (0, 0, 0)
@@ -54,7 +55,7 @@ walkright = [player_walk_right1, player_walk_right2]
 walkleft = [player_walk_left1, player_walk_left2]
 # Classes
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, spread, ydirection):
         super().__init__()
         self.image = pygame.Surface((6, 4))
         self.image.fill(WHITE)
@@ -62,11 +63,22 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.direction = "right"
+        self.directiony = ydirection
+        self.spread = spread
+        self.timer = 0
+        #Timer used to time spread
     def update(self):
+        self.timer += 1
         if self.direction == "right":
             self.rect.x = self.rect.x + 8
         elif self.direction == "left":
             self.rect.x -= 8
+        if self.timer == self.spread:
+            self.timer = 0
+            if self.directiony == True:
+                self.rect.y += 1
+            else:
+                self.rect.y -= 1
         # This piece of code seems to make the bullet dissapear straight away, don't know what the bullet is colliding with
         bullet_collision_list = pygame.sprite.spritecollide(self, obstacles, False)
         if bullet_collision_list:
@@ -306,14 +318,22 @@ while not done:
             elif event.key == pygame.K_n:
                 if player1.aiming == True:
                     player1.aiming = False
+                    x = random.randrange(0, 1)
+                    spread = random.randrange(2, 30)
+                    #Generate the amount of spread
+                    if x == 1:
+                        Ydirection = True
+                    else:
+                        Ydirection = False
+                    # Generate which way the spread goes
                     if player1.direction == "right":
                         # Coords adjusted a bit so that the bullet dies not collide with the player and dissapear straight away once created
-                        bullet = Bullet((player1.rect.x + 55), (player1.rect.y + 9))
+                        bullet = Bullet((player1.rect.x + 55), (player1.rect.y + 9), spread, Ydirection)
                         bullet.direction = "right"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
                     elif player1.direction == "left":
-                        bullet = Bullet(player1.rect.x - 6, player1.rect.y + 9)
+                        bullet = Bullet(player1.rect.x - 6, player1.rect.y + 9, spread, Ydirection)
                         bullet.direction = "left"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
@@ -379,14 +399,23 @@ while not done:
             elif event.key == pygame.K_2:
                 if player2.aiming == True:
                     player2.aiming = False
+                    player1.aiming = False
+                    x = random.randrange(0, 1)
+                    spread = random.randrange(2, 15)
+                    # Generate the amount of spread
+                    if x == 1:
+                        Ydirection = True
+                    else:
+                        Ydirection = False
+                    # Generate which way the spread goes
                     if player2.direction == "right":
                         # Coords adjusted a bit so that the bullet does not collide with the player straight away when created
-                        bullet = Bullet((player2.rect.x + 55), (player2.rect.y + 9))
+                        bullet = Bullet((player2.rect.x + 55), (player2.rect.y + 9), spread, Ydirection)
                         bullet.direction = "right"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
                     elif player2.direction == "left":
-                        bullet = Bullet(player2.rect.x - 6, player2.rect.y + 9)
+                        bullet = Bullet(player2.rect.x - 6, player2.rect.y + 9, spread, Ydirection)
                         bullet.direction = "left"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
@@ -419,4 +448,3 @@ while not done:
     pygame.display.flip()
 # Close the window and quit.
 pygame.quit()
-
