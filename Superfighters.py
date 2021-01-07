@@ -318,7 +318,7 @@ while not done:
             elif event.key == pygame.K_n:
                 if player1.aiming == True:
                     player1.aiming = False
-                    x = random.randrange(0, 1)
+                    x = random.randrange(0, 2)
                     spread = random.randrange(2, 30)
                     #Generate the amount of spread
                     if x == 1:
@@ -400,7 +400,7 @@ while not done:
                 if player2.aiming == True:
                     player2.aiming = False
                     player1.aiming = False
-                    x = random.randrange(0, 1)
+                    x = random.randrange(0, 2)
                     spread = random.randrange(2, 15)
                     # Generate the amount of spread
                     if x == 1:
