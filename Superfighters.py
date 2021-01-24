@@ -129,7 +129,7 @@ class Player(pygame.sprite.Sprite):
             elif self.supported:
                 self.accy = 0
             # Walking animation
-            if self.state == "walk":
+            if self.state == "walk" and self.supported == True:
                 if timer % 15 == 0:
                     self.walkanimationnum += 1
                     if self.walkanimationnum == 2:
@@ -173,13 +173,13 @@ class Player(pygame.sprite.Sprite):
                 for floor in player_floor_collision_list:
                     # + 63 to adjust for player height
                     self.rect.y = (floor.rect.y - 63)
-
+        # Stop the player shooting in mid air
 
         elif self.shooting == True:
             if self.direction == "right":
-                self.image = player_pistol_right
+                 self.image = player_pistol_right
             elif self.direction == "left":
-                self.image = player_pistol_left
+                 self.image = player_pistol_left
         self.image.set_colorkey(BLACK)
 
         Player_hit_list = pygame.sprite.spritecollide(self, bullet_sprite_list, False)
@@ -286,7 +286,7 @@ while not done:
                 if player1.crouching == True:
                     player1.rect.y += 18
                     player1.crouching = False
-            elif event.key == pygame.K_n:
+            elif event.key == pygame.K_n and player1.supported == True:
                 player1.aiming = True
                 player1.shooting = True
                 # This is to adjust the coordinates of the player sprite so that he stands correctly
@@ -367,7 +367,7 @@ while not done:
                 if player2.crouching == True:
                     player2.rect.y += 18
                     player2.crouching = False
-            elif event.key == pygame.K_2:
+            elif event.key == pygame.K_2 and player2.supported == True:
                 player2.aiming = True
                 player2.shooting = True
                 # This is to adjust the coordinates of the player sprite so that he stands correctly
