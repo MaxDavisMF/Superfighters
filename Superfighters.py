@@ -1,5 +1,3 @@
-
-# Import Libraries
 import pygame
 import random
 import decimal
@@ -47,9 +45,17 @@ player_pistol_right = pygame.image.load("pistolaimright.png")
 player_pistol_right = pygame.transform.scale(player_pistol_right, (50, 63))
 player_pistol_left = pygame.image.load("pistolaimleft.png")
 player_pistol_left = pygame.transform.scale(player_pistol_left,  (50, 63))
+player_magnum_right = pygame.image.load("magnumaimright.png")
+player_magnum_right = pygame.transform.scale(player_magnum_right, (50, 63))
+player_magnum_left = pygame.image.load("magnumaimleft.png")
+player_magnum_left = pygame.transform.scale(player_magnum_left,  (50, 63))
+magnum = pygame.image.load("magnum.png")
+magnum = pygame.transform.scale(magnum, (30, 18))
+pistol = pygame.image.load("pistol.png")
+pistol = pygame.transform.scale(pistol, (20, 18))
 # Fonts
 font = pygame.font.Font(None, 50)
-
+statfont = pygame.font.Font(None, 25)
 # create lists to cycle through for animations
 walkright = [player_walk_right1, player_walk_right2]
 walkleft = [player_walk_left1, player_walk_left2]
@@ -83,6 +89,22 @@ class Bullet(pygame.sprite.Sprite):
         bullet_collision_list = pygame.sprite.spritecollide(self, obstacles, False)
         if bullet_collision_list:
             self.kill()
+
+class Pickups(pygame.sprite.Sprite):
+    def __init__(self, xpos, ypos, gunnum):
+        super().__init__()
+        if gunnum == 0:
+            self.image = pistol
+            self.type = "pistol"
+        elif gunnum == 1:
+            self.image = magnum
+            self.type = "magnum"
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.x = xpos
+        self.rect.y = ypos
+
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, xpos, ypos):
@@ -176,10 +198,16 @@ class Player(pygame.sprite.Sprite):
         # Stop the player shooting in mid air
 
         elif self.shooting == True:
-            if self.direction == "right":
-                 self.image = player_pistol_right
-            elif self.direction == "left":
-                 self.image = player_pistol_left
+            if self.gun == "pistol":
+                if self.direction == "right":
+                    self.image = player_pistol_right
+                elif self.direction == "left":
+                    self.image = player_pistol_left
+            elif self.gun == "magnum":
+                if self.direction == "right":
+                    self.image = player_magnum_right
+                elif self.direction == "left":
+                    self.image = player_magnum_left
         self.image.set_colorkey(BLACK)
 
         Player_hit_list = pygame.sprite.spritecollide(self, bullet_sprite_list, False)
@@ -208,6 +236,22 @@ class Titleimage(pygame.sprite.Sprite):
         self.rect.y = 25
 
 
+def drawstats():
+    if Multiplayer:
+        pygame.draw.rect(screen, BLACK, [300, 0, 400, 100])
+        player1title = statfont.render("Player 1:", True, WHITE)
+        screen.blit(player1title, [310, 10])
+        player1health = statfont.render(str(player1.health), True, WHITE)
+        screen.blit(player1health, [310, 45])
+        player1gun = statfont.render(player1.gun, True, WHITE)
+        screen.blit(player1gun, [310, 80])
+
+        player2title = statfont.render("Player 2:", True, WHITE)
+        screen.blit(player2title, [510, 10])
+        player2health = statfont.render(str(player2.health), True, WHITE)
+        screen.blit(player2health, [510, 45])
+        player2gun = statfont.render(player2.gun, True, WHITE)
+        screen.blit(player2gun, [510, 80])
 
 # Instantiate Objects
 player1 = Player(900, 650)
@@ -220,14 +264,17 @@ floors = pygame.sprite.Group()
 hard_floors = pygame.sprite.Group()
 bullet_sprite_list = pygame.sprite.Group()
 obstacles = pygame.sprite.Group()
+pickups_sprite_list = pygame.sprite.Group()
 # Adding Objects to sprite lists
 # all_sprites_list.add(player1)
 # variables
 timer = 0
+pickup_timer = 0
 done = False
 Menu = True
 setup = True
 Multiplayer = False
+gunnum = 0
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
  
@@ -261,6 +308,7 @@ while not done:
             all_sprites_list.add(player1)
             all_sprites_list.add(player2)
             all_sprites_list.add(map1floor)
+
             if Map1:
                 all_sprites_list.add(map1floor)
                 hard_floors.add(map1floor)
@@ -300,6 +348,12 @@ while not done:
                     player1.uncrouching = False
                     #To readjust the sprite when the player stops shooting.
                     player1.crouching = True
+            elif event.key == pygame.K_k:
+                pickup_player_contact = pygame.sprite.spritecollide(player1, pickups_sprite_list, False)
+                for gun in pickup_player_contact:
+                    player1.gun = gun.type
+                    gun.kill()
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT and player1.crouched == False:
                 player1.speedx = 0
@@ -333,7 +387,7 @@ while not done:
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
                     elif player1.direction == "left":
-                        bullet = Bullet(player1.rect.x - 6, player1.rect.y + 9, spread, Ydirection)
+                        bullet = Bullet(player1.rect.x - 12, player1.rect.y + 9, spread, Ydirection)
                         bullet.direction = "left"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
@@ -381,6 +435,11 @@ while not done:
                     player2.uncrouching = False
                     #To readjust the sprite when the player stops shooting.
                     player2.crouching = True
+            elif event.key == pygame.K_q:
+                pickup_player_contact = pygame.sprite.spritecollide(player2, pickups_sprite_list, False)
+                for gun in pickup_player_contact:
+                    player2.gun = gun.type
+                    gun.kill()
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a and player2.crouched == False:
                 player2.speedx = 0
@@ -415,7 +474,7 @@ while not done:
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
                     elif player2.direction == "left":
-                        bullet = Bullet(player2.rect.x - 6, player2.rect.y + 9, spread, Ydirection)
+                        bullet = Bullet(player2.rect.x - 12, player2.rect.y + 9, spread, Ydirection)
                         bullet.direction = "left"
                         all_sprites_list.add(bullet)
                         bullet_sprite_list.add(bullet)
@@ -433,6 +492,15 @@ while not done:
         for bullet in bullet_sprite_list:
             bullet.update()
 
+        if pickup_timer == 599:
+            for item in pickups_sprite_list:
+                item.kill()
+            gunnum = random.randrange(0, 2)
+            spawn = Pickups(490, 625, gunnum)
+            all_sprites_list.add(spawn)
+            pickups_sprite_list.add(spawn)
+
+
         screen.blit(background_image, (0, 0))
 
         # --- Limit to 60 frames per second
@@ -441,9 +509,12 @@ while not done:
         timer = timer + 1
         if timer % 60 == 0:
             timer = 0
-
+        pickup_timer += 1
+        if pickup_timer % 600 ==0:
+            pickup_timer = 0
     # --- Drawing code should go here
     all_sprites_list.draw(screen)
+    drawstats()
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 # Close the window and quit.
