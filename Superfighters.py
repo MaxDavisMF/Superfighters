@@ -190,15 +190,23 @@ class Player(pygame.sprite.Sprite):
             if not player_floor_collision_list:
                 self.supported = False
             if player_floor_collision_list and self.speedy > 0:
-                self.speedy = 0
-                self.supported = True
-                if self.speedx != 0:
-                    self.state = "walk"
-                else:
-                    self.state = "still"
                 for floor in player_floor_collision_list:
-                    # + 63 to adjust for player height
-                    self.rect.y = (floor.rect.y - 63)
+                    # This checks that the player is sufficiently high to "land" on the platform, so that he does not
+                    # teleport up to it if the top of his head touches it
+                    # The second part of the or statement allows the character to land on the platform if he is lower than the required hieght if
+                    # he is falling fast enough. This is because I had a problem where the characters would fall
+                    # so fast that he would miss the acceptable range for landing on the platform in 1 frame
+                    # Note this may need to be improved later on by creating more speed categories with different windows since 5 and above is quite a large range of speeds,
+                    #W What works at 15 pixels a frane may look bad if the character is falling 5 pixels a frame
+                     if self.rect.y < (floor.rect.y - 58) or (self.speedy > 5 and self.rect.y < (floor.rect.y - 50)):
+                        if self.speedx != 0:
+                           self.state = "walk"
+                        else:
+                            self.state = "still"
+                        self.speedy = 0
+                        self.supported = True
+                        # + 63 to adjust for player height
+                        self.rect.y = (floor.rect.y - 63)
         # Stop the player shooting in mid air
 
         elif self.shooting == True:
@@ -342,8 +350,8 @@ while not done:
             if setup:
                 setup = False
                 all_sprites_list.empty()
-                player1 = Player(900, 650)
-                player2 = Player(100, 650)
+                player1 = Player(900, 580)
+                player2 = Player(100, 580)
                 all_sprites_list.add(player1)
                 all_sprites_list.add(player2)
                 all_sprites_list.add(map1floor)
