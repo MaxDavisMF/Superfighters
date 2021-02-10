@@ -1,3 +1,4 @@
+# Import Libraries
 import pygame
 import random
 import decimal
@@ -8,6 +9,7 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 GREY = (128, 128, 128)
+PLATFORM = (192, 192, 192)
 pygame.init()
  
 # Set the screen up
@@ -123,7 +125,7 @@ class Player(pygame.sprite.Sprite):
         self.speedy = 0
         self.supported = False
         #Supported decides whether or not to make the player fall
-        self.accy = 0.163
+        self.accy = 0.2
         self.accx = 0
         # 9.8 / 60, to model realistic acceleration
         self.crouching = True
@@ -185,6 +187,8 @@ class Player(pygame.sprite.Sprite):
             # Check if floor has been hit
             player_floor_collision_list = pygame.sprite.spritecollide(self, floors, False)
             # If it has and player was falling, stop falling and place player on top of floor
+            if not player_floor_collision_list:
+                self.supported = False
             if player_floor_collision_list and self.speedy > 0:
                 self.speedy = 0
                 self.supported = True
@@ -226,6 +230,16 @@ class Hardfloor(pygame.sprite.Sprite):
         self.rect.x = xcoord
         self.rect.y = ycoord
 
+class Softfloor(pygame.sprite.Sprite):
+    def __init__(self, xsize, xcoord, ycoord):
+        super().__init__()
+        self.image = pygame.Surface((xsize, 5))
+        self.image.fill(PLATFORM)
+        self.rect = self.image.get_rect()
+        self.rect.x = xcoord
+        self.rect.y = ycoord
+
+
 class Titleimage(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -235,7 +249,18 @@ class Titleimage(pygame.sprite.Sprite):
         self.rect.x = 150
         self.rect.y = 25
 
-
+# These funtions will create the maps
+# Map1:
+def map1create():
+    map1floor = Hardfloor(1000, 100, 0, 650)
+    all_sprites_list.add(map1floor)
+    floors.add(map1floor)
+    obstacles.add(map1floor)
+    map1softfloor1 = Softfloor(300, 50, 550)
+    all_sprites_list.add(map1softfloor1)
+    floors.add(map1softfloor1)
+    obstacles.add(map1softfloor1)
+# This function draws the Players stats at the top of the screen
 def drawstats():
     if Multiplayer and not Gameover:
         pygame.draw.rect(screen, BLACK, [300, 0, 400, 100])
@@ -252,6 +277,7 @@ def drawstats():
         screen.blit(player2health, [510, 45])
         player2gun = statfont.render(player2.gun, True, WHITE)
         screen.blit(player2gun, [510, 80])
+        #This function displays th winner after a game
 def drawwinner(winner):
     if Multiplayer and Gameover:
         if winner == "Player 1":
@@ -262,13 +288,13 @@ def drawwinner(winner):
             screen.blit(Winnertext, [370, 150])
         nexttext = font.render("Press Space to return to menu", True, WHITE)
         screen.blit(nexttext, [250, 500])
+
 # Instantiate Objects
 titlepic = Titleimage()
 map1floor = Hardfloor(1000, 100, 0, 650)
 # Set up sprite lists
 all_sprites_list = pygame.sprite.Group()
 floors = pygame.sprite.Group()
-hard_floors = pygame.sprite.Group()
 bullet_sprite_list = pygame.sprite.Group()
 obstacles = pygame.sprite.Group()
 pickups_sprite_list = pygame.sprite.Group()
@@ -323,10 +349,8 @@ while not done:
                 all_sprites_list.add(map1floor)
 
                 if Map1:
-                    all_sprites_list.add(map1floor)
-                    hard_floors.add(map1floor)
-                    floors.add(map1floor)
-                    obstacles.add(map1floor)
+                    map1create()
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and player1.crouched == False:
                     player1.speedx = -5
@@ -337,7 +361,7 @@ while not done:
                     player1.state = "walk"
                     player1.direction = "right"
                 elif event.key == pygame.K_UP and player1.supported == True:
-                    player1.speedy = -5
+                    player1.speedy = -5.4
                     player1.supported = False
                     player1.state = "jump"
                 elif event.key == pygame.K_DOWN and player1.supported == True and player1.shooting == False:
@@ -424,7 +448,7 @@ while not done:
                     player2.state = "walk"
                     player2.direction = "right"
                 elif event.key == pygame.K_w and player2.supported == True:
-                    player2.speedy = -5
+                    player2.speedy = -5.4
                     player2.supported = False
                     player2.state = "jump"
                 elif event.key == pygame.K_s and player2.supported == True and player2.shooting == False:
