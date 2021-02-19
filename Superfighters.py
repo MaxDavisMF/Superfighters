@@ -139,6 +139,7 @@ class Player(pygame.sprite.Sprite):
         self.wascrouched = False
         self.health = 100
         self.gun = "pistol"
+        self.ammo = 12
         self.shooting = False
         # Used to decide if the player was aiming when the n key is released, so that a bullet is not spawned every frame after it has been released
         self.aiming = True
@@ -294,13 +295,15 @@ def map1create():
 # This function draws the Players stats at the top of the screen
 def drawstats():
     if Multiplayer and not Gameover:
-        pygame.draw.rect(screen, BLACK, [300, 0, 400, 100])
+        pygame.draw.rect(screen, BLACK, [300, 0, 400, 150])
         player1title = statfont.render("Player 1:", True, WHITE)
         screen.blit(player1title, [310, 10])
         player1health = statfont.render(str(player1.health), True, WHITE)
         screen.blit(player1health, [310, 45])
         player1gun = statfont.render(player1.gun, True, WHITE)
         screen.blit(player1gun, [310, 80])
+        player1ammo = statfont.render(str(player1.ammo), True, WHITE)
+        screen.blit(player1ammo, [310, 115])
 
         player2title = statfont.render("Player 2:", True, WHITE)
         screen.blit(player2title, [510, 10])
@@ -308,6 +311,9 @@ def drawstats():
         screen.blit(player2health, [510, 45])
         player2gun = statfont.render(player2.gun, True, WHITE)
         screen.blit(player2gun, [510, 80])
+        player2ammo = statfont.render(str(player2.ammo), True, WHITE)
+        screen.blit(player2ammo, [510, 115])
+
         #This function displays th winner after a game
 def drawwinner(winner):
     if Multiplayer and Gameover:
@@ -420,6 +426,10 @@ while not done:
                     pickup_player_contact = pygame.sprite.spritecollide(player1, pickups_sprite_list, False)
                     for gun in pickup_player_contact:
                         player1.gun = gun.type
+                        if gun.type == "magnum":
+                            player1.ammo = 5
+                        elif gun.type == "pistol":
+                            player1.ammo = 12
                         gun.kill()
 
             if event.type == pygame.KEYUP:
@@ -438,7 +448,8 @@ while not done:
                     player1.crouched = False
                     player1.wascrouched = False
                 elif event.key == pygame.K_n:
-                    if player1.aiming == True:
+                    if player1.aiming == True and player1.ammo > 0:
+                        player1.ammo -= 1
                         player1.aiming = False
                         x = random.randrange(0, 2)
                         spread = random.randrange(2, 30)
@@ -508,6 +519,10 @@ while not done:
                     pickup_player_contact = pygame.sprite.spritecollide(player2, pickups_sprite_list, False)
                     for gun in pickup_player_contact:
                         player2.gun = gun.type
+                        if gun.type == "magnum":
+                            player1.ammo = 5
+                        elif gun.type == "pistol":
+                            player1.ammo = 12
                         gun.kill()
 
             if event.type == pygame.KEYUP:
@@ -526,9 +541,9 @@ while not done:
                     player2.crouched = False
                     player2.wascrouched = False
                 elif event.key == pygame.K_2:
-                    if player2.aiming == True:
+                    if player2.aiming == True and player2.ammo > 0:
+                        player2.ammo -= 1
                         player2.aiming = False
-                        player1.aiming = False
                         x = random.randrange(0, 2)
                         spread = random.randrange(2, 15)
                         # Generate the amount of spread
@@ -541,7 +556,6 @@ while not done:
                             # Coords adjusted a bit so that the bullet does not collide with the player straight away when created
                             bullet = Bullet((player2.rect.x + 55), (player2.rect.y + 9), spread, Ydirection)
                             bullet.direction = "right"
-                            bullet.gun = player2.gun
                             all_sprites_list.add(bullet)
                             bullet_sprite_list.add(bullet)
                         elif player2.direction == "left":
@@ -622,4 +636,5 @@ while not done:
     pygame.display.flip()
 # Close the window and quit.
 pygame.quit()
+
 
