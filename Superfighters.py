@@ -1,3 +1,4 @@
+
 # Import Libraries
 import pygame
 import random
@@ -154,7 +155,7 @@ class Player(pygame.sprite.Sprite):
                 self.accy = 0
             # Walking animation
             if self.state == "walk" and self.supported == True:
-                if timer % 15 == 0:
+                if timer % 5 == 0:
                     self.walkanimationnum += 1
                     if self.walkanimationnum == 2:
                         self.walkanimationnum = 0
@@ -197,7 +198,7 @@ class Player(pygame.sprite.Sprite):
                     # he is falling fast enough. This is because I had a problem where the characters would fall
                     # so fast that he would miss the acceptable range for landing on the platform in 1 frame
                     # Note this may need to be improved later on by creating more speed categories with different windows since 5 and above is quite a large range of speeds,
-                    #W What works at 15 pixels a frane may look bad if the character is falling 5 pixels a frame
+                    # What works at 15 pixels a frane may look bad if the character is falling 5 pixels a frame
                      if self.rect.y < (floor.rect.y - 58) or (self.speedy > 5 and self.rect.y < (floor.rect.y - 50)):
                         if self.speedx != 0:
                            self.state = "walk"
@@ -210,7 +211,7 @@ class Player(pygame.sprite.Sprite):
         # Stop the player shooting in mid air
 
         elif self.shooting == True:
-            if self.gun == "pistol":
+            if self.gun == "pistol": 
                 if self.direction == "right":
                     self.image = player_pistol_right
                 elif self.direction == "left":
@@ -268,6 +269,22 @@ def map1create():
     all_sprites_list.add(map1softfloor1)
     floors.add(map1softfloor1)
     obstacles.add(map1softfloor1)
+    map1softfloor2 = Softfloor(300, 650, 550)
+    all_sprites_list.add(map1softfloor2)
+    floors.add(map1softfloor2)
+    obstacles.add(map1softfloor2)
+    map1softfloor3 = Softfloor(300, 350, 450)
+    all_sprites_list.add(map1softfloor3)
+    floors.add(map1softfloor3)
+    obstacles.add(map1softfloor3)
+    map1softfloor4 = Softfloor(300, 50, 350)
+    all_sprites_list.add(map1softfloor4)
+    floors.add(map1softfloor4)
+    obstacles.add(map1softfloor4)
+    map1softfloor5 = Softfloor(300, 650, 350)
+    all_sprites_list.add(map1softfloor5)
+    floors.add(map1softfloor5)
+    obstacles.add(map1softfloor5)
 # This function draws the Players stats at the top of the screen
 def drawstats():
     if Multiplayer and not Gameover:
@@ -541,10 +558,21 @@ while not done:
                 for item in pickups_sprite_list:
                     item.kill()
                 gunnum = random.randrange(0, 2)
-                spawn = Pickups(490, 625, gunnum)
-                all_sprites_list.add(spawn)
-                pickups_sprite_list.add(spawn)
-
+                spawn1 = Pickups(490, 625, gunnum)
+                all_sprites_list.add(spawn1)
+                pickups_sprite_list.add(spawn1)
+                gunnum = random.randrange(0, 2)
+                spawn2 = Pickups(490, 425, gunnum)
+                all_sprites_list.add(spawn2)
+                pickups_sprite_list.add(spawn2)
+                gunnum = random.randrange(0, 2)
+                spawn3 = Pickups(190, 325, gunnum)
+                all_sprites_list.add(spawn3)
+                pickups_sprite_list.add(spawn3)
+                gunnum = random.randrange(0, 2)
+                spawn4 = Pickups(790, 325, gunnum)
+                all_sprites_list.add(spawn4)
+                pickups_sprite_list.add(spawn4)
 
             screen.blit(background_image, (0, 0))
 
