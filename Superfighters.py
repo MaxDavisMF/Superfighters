@@ -75,6 +75,7 @@ class Bullet(pygame.sprite.Sprite):
         self.directiony = ydirection
         self.spread = spread
         self.timer = 0
+        self.gun = "pistol"
         #Timer used to time spread
     def update(self):
         self.timer += 1
@@ -89,9 +90,10 @@ class Bullet(pygame.sprite.Sprite):
             else:
                 self.rect.y -= 1
         # This piece of code seems to make the bullet dissapear straight away, don't know what the bullet is colliding with
-        bullet_collision_list = pygame.sprite.spritecollide(self, obstacles, False)
-        if bullet_collision_list:
-            self.kill()
+        # FIXED earlier but forgot to document, bullet was colliding with player shooting it instantly due to faulty spawn coords
+        #bullet_collision_list = pygame.sprite.spritecollide(self, obstacles, False)
+        #if bullet_collision_list:
+        #    self.kill()
 
 class Pickups(pygame.sprite.Sprite):
     def __init__(self, xpos, ypos, gunnum):
@@ -226,8 +228,12 @@ class Player(pygame.sprite.Sprite):
         Player_hit_list = pygame.sprite.spritecollide(self, bullet_sprite_list, False)
         if Player_hit_list:
             for bullet in Player_hit_list:
+                if bullet.gun == "pistol":
+                    self.health -= 9
+                elif bullet.gun == "magnum":
+                    self.health -= 20
                 bullet.kill()
-                self.health -= 9
+
 
 
 class Hardfloor(pygame.sprite.Sprite):
@@ -453,6 +459,7 @@ while not done:
                             bullet.direction = "left"
                             all_sprites_list.add(bullet)
                             bullet_sprite_list.add(bullet)
+                        bullet.gun = player1.gun
                     player1.shooting = False
                     if player1.wascrouched == True:
                         if player1.crouching == True:
@@ -502,6 +509,7 @@ while not done:
                     for gun in pickup_player_contact:
                         player2.gun = gun.type
                         gun.kill()
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a and player2.crouched == False:
                     player2.speedx = 0
@@ -533,6 +541,7 @@ while not done:
                             # Coords adjusted a bit so that the bullet does not collide with the player straight away when created
                             bullet = Bullet((player2.rect.x + 55), (player2.rect.y + 9), spread, Ydirection)
                             bullet.direction = "right"
+                            bullet.gun = player2.gun
                             all_sprites_list.add(bullet)
                             bullet_sprite_list.add(bullet)
                         elif player2.direction == "left":
@@ -540,6 +549,7 @@ while not done:
                             bullet.direction = "left"
                             all_sprites_list.add(bullet)
                             bullet_sprite_list.add(bullet)
+                        bullet.gun = player2.gun
                     player2.shooting = False
                     if player2.wascrouched == True:
                         if player2.crouching == True:
@@ -612,3 +622,4 @@ while not done:
     pygame.display.flip()
 # Close the window and quit.
 pygame.quit()
+
