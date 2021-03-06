@@ -1,4 +1,5 @@
-
+# Trying to allow the player to double tap down key to fall through floor, see lines 441 for start of attempt
+# Moved on - need to come back to this
 # Import Libraries
 import pygame
 import random
@@ -109,8 +110,6 @@ class Pickups(pygame.sprite.Sprite):
         self.rect.x = xpos
         self.rect.y = ypos
 
-
-
 class Player(pygame.sprite.Sprite):
     def __init__(self, xpos, ypos):
         super().__init__()
@@ -128,9 +127,8 @@ class Player(pygame.sprite.Sprite):
         self.speedy = 0
         self.supported = False
         #Supported decides whether or not to make the player fall
-        self.accy = 0.2
+        self.accy = 0.16
         self.accx = 0
-        # 9.8 / 60, to model realistic acceleration
         self.crouching = True
         self.uncrouching = False
         # Used to decide if player is crouching or uncrouching (changing state) to adjust coords of sprite. Crouching set to True as next time it is used the sprite will be crouching
@@ -143,6 +141,8 @@ class Player(pygame.sprite.Sprite):
         self.shooting = False
         # Used to decide if the player was aiming when the n key is released, so that a bullet is not spawned every frame after it has been released
         self.aiming = True
+        # Dropping is used when the player drops through a soft floor
+        self.dropping = False
 
 
     def update(self, timer):
@@ -151,11 +151,6 @@ class Player(pygame.sprite.Sprite):
                 self.speedx = 0
             # Update sideways movement
             self.rect.x = self.rect.x + self.speedx
-            # Update whether player is falling or not
-            if not self.supported:
-                self.accy = 0.163
-            elif self.supported:
-                self.accy = 0
             # Walking animation
             if self.state == "walk" and self.supported == True:
                 if timer % 5 == 0:
@@ -202,7 +197,7 @@ class Player(pygame.sprite.Sprite):
                     # so fast that he would miss the acceptable range for landing on the platform in 1 frame
                     # Note this may need to be improved later on by creating more speed categories with different windows since 5 and above is quite a large range of speeds,
                     # What works at 15 pixels a frane may look bad if the character is falling 5 pixels a frame
-                     if self.rect.y < (floor.rect.y - 58) or (self.speedy > 5 and self.rect.y < (floor.rect.y - 50)):
+                     if self.rect.y < (floor.rect.y - 58) or (self.speedy > 5 and self.rect.y < (floor.rect.y - 50)) and self.dropping == False:
                         if self.speedx != 0:
                            self.state = "walk"
                         else:
@@ -292,6 +287,13 @@ def map1create():
     all_sprites_list.add(map1softfloor5)
     floors.add(map1softfloor5)
     obstacles.add(map1softfloor5)
+# These functions will generate the levels
+# Level 1:
+def Level1create():
+    Level1floor = Hardfloor(25000, 100, 0, 650)
+    all_sprites_list.add(Level1floor)
+    floors.add(Level1floor)
+    obstacles.add(Level1floor)
 # This function draws the Players stats at the top of the screen
 def drawstats():
     if Multiplayer and not Gameover:
@@ -342,11 +344,14 @@ timer = 0
 pickup_timer = 0
 done = False
 Menu = True
-setup = True
+Setup = True
 Multiplayer = False
 Gameover = False
+Singleplayer = False
 gunnum = 0
-
+player1downcount = 0
+player1downtimer = 0
+Levelselect = False
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
  
@@ -358,32 +363,183 @@ while not done:
             done = True
     
     if Menu:
-        if setup:
-            setup = False
+        if Setup:
+            Setup = False
             all_sprites_list.empty()
             all_sprites_list.add(titlepic)
             Multiplayertext = font.render("Press 1 to play Multiplayer!", True, WHITE)
+            Singleplayertext = font.render("Press 2 to play Singleplayer!", True, WHITE)
 
         screen.fill(BLACK)
         screen.blit(Multiplayertext, [275, 250])
+        screen.blit(Singleplayertext, [275, 350])
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_1:
                 Menu = False
                 Multiplayer = True
-                setup = True
+                Setup = True
                 Map1 = True
                 Gameover = False
-                #Set Map1 to true so that i can develop the first map, there will be the option to choose a map late ron
-    if Multiplayer:
+                #Set Map1 to true so that i can develop the first map, there will be the option to choose a map later on
+            if event.key == pygame.K_2:
+                Menu = False
+                Singleplayer = True
+                Setup = False
+                Levelselect = True
+                Gameover = False
+    if Singleplayer == True:
+        if Levelselect == True:
+            Level1text = font.render("Press 1 for Level 1", True, WHITE)
+            Level2text = font.render("Press 2 for Level 2", True, WHITE)
+            Level3text = font.render("Press 3 for Level 3", True, WHITE)
+            screen.fill(BLACK)
+            screen.blit(Level1text, [350, 250])
+            screen.blit(Level2text, [350, 350])
+            screen.blit(Level3text, [350, 450])
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    Setup = True
+                    Level = 1
+                    Levelselect = False
+                if event.key == pygame.K_2:
+                    Setup = True
+                    Level = 2
+                    Levelselect = False
+                if event.key == pygame.K_3:
+                    Setup = True
+                    Level = 3
+                    Levelselect = False
         if not Gameover:
-            if setup:
+            if Setup == True:
                 setup = False
                 all_sprites_list.empty()
+                floors.empty()
+                player1 = Player(470, 580)
+                all_sprites_list.add(player1)
+                if Level == 1:
+                   Level1create()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT and player1.crouched == False:
+                    player1.speedx = -5
+                    player1.state = "walk"
+                    player1.direction = "left"
+                elif event.key == pygame.K_RIGHT and player1.crouched == False:
+                    player1.speedx = 5
+                    player1.state = "walk"
+                    player1.direction = "right"
+                elif event.key == pygame.K_UP and player1.supported == True:
+                    player1.speedy = -5.4
+                    player1.supported = False
+                    player1.state = "jump"
+                elif event.key == pygame.K_DOWN and player1.supported == True and player1.shooting == False:
+                    player1.state = "crouched"
+                    player1.crouched = True
+                    player1.uncrouching = True
+                    if player1.crouching == True:
+                        player1.rect.y += 18
+                        player1.crouching = False
+                    # This code is for double tapping the down key to drop from a floor
+                    player1downcount += 1
+                    if player1downcount == 2 and player1downtimer <= 20:
+                        player1downcount = 0
+                        player1.supported = False
+                        player1.dropping = True
+                    player1downtimer = 0
+
+                elif event.key == pygame.K_n and player1.supported == True:
+                    player1.aiming = True
+                    player1.shooting = True
+                    # This is to adjust the coordinates of the player sprite so that he stands correctly
+                    if player1.crouched == True:
+                        player1.crouched = False
+                        # Remember that the player was crocuhed
+                        player1.wascrouched = True
+                        # Adjust coords of player
+                        player1.rect.y -= 18
+                        # So that the player is not shifted up again if the player lets go of the down key
+                        player1.uncrouching = False
+                        # To readjust the sprite when the player stops shooting.
+                        player1.crouching = True
+                elif event.key == pygame.K_k:
+                    pickup_player_contact = pygame.sprite.spritecollide(player1, pickups_sprite_list, False)
+                    for gun in pickup_player_contact:
+                        player1.gun = gun.type
+                        if gun.type == "magnum":
+                            player1.ammo = 5
+                        elif gun.type == "pistol":
+                            player1.ammo = 12
+                        gun.kill()
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT and player1.crouched == False:
+                    player1.speedx = 0
+                    player1.state = "still"
+                elif event.key == pygame.K_RIGHT and player1.crouched == False:
+                    player1.speedx = 0
+                    player1.state = "still"
+                elif event.key == pygame.K_DOWN:
+                    if player1.uncrouching == True:
+                        player1.rect.y -= 18
+                        player1.uncrouching = False
+                    player1.state = "still"
+                    player1.crouching = True
+                    player1.crouched = False
+                    player1.wascrouched = False
+                elif event.key == pygame.K_n:
+                    if player1.aiming == True and player1.ammo > 0:
+                        player1.ammo -= 1
+                        player1.aiming = False
+                        x = random.randrange(0, 2)
+                        spread = random.randrange(2, 30)
+                        # Generate the amount of spread
+                        if x == 1:
+                            Ydirection = True
+                        else:
+                            Ydirection = False
+                        # Generate which way the spread goes
+                        if player1.direction == "right":
+                            # Coords adjusted a bit so that the bullet dies not collide with the player and dissapear straight away once created
+                            bullet = Bullet((player1.rect.x + 55), (player1.rect.y + 9), spread, Ydirection)
+                            bullet.direction = "right"
+                            all_sprites_list.add(bullet)
+                            bullet_sprite_list.add(bullet)
+                        elif player1.direction == "left":
+                            bullet = Bullet(player1.rect.x - 12, player1.rect.y + 9, spread, Ydirection)
+                            bullet.direction = "left"
+                            all_sprites_list.add(bullet)
+                            bullet_sprite_list.add(bullet)
+                        bullet.gun = player1.gun
+                    player1.shooting = False
+                    if player1.wascrouched == True:
+                        if player1.crouching == True:
+                            player1.rect.y += 18
+                            player1.wascrouched = False
+                            player1.crouched = True
+                            player1.crouching = False
+                            player1.uncrouching = True
+
+            for sprite in all_sprites_list:
+                sprite.rect.x -= 2.5
+
+            player1.update(timer)
+            screen.blit(background_image, (0, 0))
+            # --- Limit to 60 frames per second
+            clock.tick(60)
+
+
+
+
+    if Multiplayer:
+        if not Gameover:
+            if Setup:
+                Setup = False
+                all_sprites_list.empty()
+                floors.empty()
                 player1 = Player(900, 580)
                 player2 = Player(100, 580)
                 all_sprites_list.add(player1)
                 all_sprites_list.add(player2)
-                all_sprites_list.add(map1floor)
 
                 if Map1:
                     map1create()
@@ -408,6 +564,14 @@ while not done:
                     if player1.crouching == True:
                         player1.rect.y += 18
                         player1.crouching = False
+                    # This code is for double tapping the down key to drop from a floor
+                    player1downcount += 1
+                    if player1downcount == 2 and player1downtimer <= 20:
+                        player1downcount = 0
+                        player1.supported = False
+                        player1.dropping = True
+                    player1downtimer = 0
+
                 elif event.key == pygame.K_n and player1.supported == True:
                     player1.aiming = True
                     player1.shooting = True
@@ -520,9 +684,9 @@ while not done:
                     for gun in pickup_player_contact:
                         player2.gun = gun.type
                         if gun.type == "magnum":
-                            player1.ammo = 5
+                            player2.ammo = 5
                         elif gun.type == "pistol":
-                            player1.ammo = 12
+                            player2.ammo = 12
                         gun.kill()
 
             if event.type == pygame.KEYUP:
@@ -606,16 +770,20 @@ while not done:
             timer = timer + 1
             if timer % 60 == 0:
                 timer = 0
+            player1downtimer += 1
+            if player1downtimer == 15:
+                player1.dropping = False
+                player1downtimer = 0
             pickup_timer += 1
             if pickup_timer % 600 ==0:
                 pickup_timer = 0
 
-            if player1.health < 0:
+            if player1.health <= 0:
                 winner = "Player 2"
                 for sprite in all_sprites_list:
                     sprite.kill()
                 Gameover = True
-            if player2.health < 0:
+            if player2.health <= 0:
                 winner = "Player 1"
                 for sprite in all_sprites_list:
                     sprite.kill()
@@ -628,13 +796,11 @@ while not done:
                     Multiplayer = False
                     Menu = True
                     setup = True
+        drawstats()
     # --- Drawing code should go here
     all_sprites_list.draw(screen)
     #Subroutine contains the only run if multiplayer and not game over
-    drawstats()
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 # Close the window and quit.
 pygame.quit()
-
-
