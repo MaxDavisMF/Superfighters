@@ -101,7 +101,7 @@ class Enemy(pygame.sprite.Sprite):
         self.image = player_still_image_left
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.rect.x = 950
+        self.rect.x = 1050
         self.rect.y = ypos
         self.health = 15
         self.walkanimationnum = 0
@@ -109,7 +109,7 @@ class Enemy(pygame.sprite.Sprite):
         self.state = "still"
         # direction will be used to decide which image should be used when moving/standing in different directions
         self.direction = "left"
-        self.speedx = -5
+        self.speedx = -2
         self.speedy = 0
         self.supported = False
         #Supported decides whether or not to make the enemy fall
@@ -121,17 +121,34 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speedx
-        self.speedy += self.accy
-        self.rect.y += self.speedy
+        if not self.supported:
+            self.speedy += self.accy
+            self.rect.y += self.speedy
+        # This is the same code that was use in the Player update function to allow the player to land on floors. Explained there
+        player_floor_collision_list = pygame.sprite.spritecollide(self, floors, False)
+        if not player_floor_collision_list:
+            self.supported = False
+        if player_floor_collision_list and self.speedy > 0:
+            for floor in player_floor_collision_list:
+                if self.rect.y < (floor.rect.y - 58) or (self.speedy > 5 and self.rect.y < (floor.rect.y - 50)):
+                    if self.speedx != 0:
+                        self.state = "walk"
+                    self.speedy = 0
+                    self.supported = True
+                    self.jumping = False
+                    # + 63 to adjust for player height
+                    self.rect.y = (floor.rect.y - 63)
+
         if self.jumping == False:
             self.image = walkleft[self.walkanimationnum]
             jump = random.randrange(0, 30)
-            if jump == 1:
+            if jump == 1 and self.supported == True:
                 self.jumping = True
                 self.state = "jumping"
                 self.speedy = -5.4
         else:
             self.image = player_jump_left
+
 
 class Pickups(pygame.sprite.Sprite):
     def __init__(self, xpos, ypos, gunnum):
@@ -591,7 +608,7 @@ while not done:
                 if Level == "1":
                     Level1floor.rect.x += 2
 
-                if Enemy_spawn_timer == 30:
+                if Enemy_spawn_timer == 180:
                     Enemy_spawn_timer = 0
                     ypos = random.randrange(110, 600)
                     enemy = Enemy(ypos)
@@ -891,6 +908,5 @@ while not done:
 
 # Close the window and quit.
 pygame.quit()
-
 
 
