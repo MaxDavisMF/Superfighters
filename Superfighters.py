@@ -196,6 +196,7 @@ class Player(pygame.sprite.Sprite):
         self.aiming = True
         # Dropping is used when the player drops through a soft floor
         self.dropping = False
+        self.lives = 3
 
 
     def update(self, timer):
@@ -364,7 +365,15 @@ def drawstats():
         player2ammo = statfont.render(str(player2.ammo), True, WHITE)
         screen.blit(player2ammo, [510, 115])
 
-        #This function displays th winner after a game
+    if Singleplayer:
+        pygame.draw.rect(screen, BLACK, [400, 0, 200, 150])
+        player1lives = statfont.render("Lives: " and str(player1.lives), True, WHITE)
+        screen.blit(player1lives, [410, 25])
+        player1ammo = statfont.render("Ammo: " and str(player1.ammo), True, WHITE)
+        screen.blit(player1ammo, [410, 55])
+
+
+        #This function displays the winner after a game
 def drawwinner(winner):
     if Multiplayer and Gameover:
         if winner == "Player 1":
@@ -618,12 +627,26 @@ while not done:
                 for enemy in enemies:
                     enemy.update()
 
+                Enemy_hit_list = pygame.sprite.groupcollide(enemies, bullet_sprite_list, True, True)
+
+
                 for sprite in floors:
                     if sprite.rect.x < -300:
                         sprite.kill()
 
+                drawstats()
                 player1.update(timer)
                 screen.blit(background_image, (0, 0))
+
+                pygame.draw.rect(screen, BLACK, [400, 0, 200, 150])
+                player1lives = statfont.render("Lives: ", True, WHITE)
+                player1lives2 = statfont.render(str(player1.lives), True, WHITE)
+                screen.blit(player1lives, [410, 25])
+                screen.blit(player1lives2, [470, 25])
+                player1ammo = statfont.render("Ammo: ", True, WHITE)
+                player1ammo2 = statfont.render(str(player1.ammo), True, WHITE)
+                screen.blit(player1ammo, [410, 55])
+                screen.blit(player1ammo2, [470, 55 ])
 
                 Enemy_spawn_timer += 1
 
