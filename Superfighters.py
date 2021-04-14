@@ -1,3 +1,6 @@
+# Trying to allow the player to double tap down key to fall through floor, see lines 441 for start of attempt
+# Moved on - need to come back to this
+#Need to commit once I fix the Level 1 floor bug
 # Import Libraries
 import pygame
 import random
@@ -409,12 +412,39 @@ while not done:
                         floors.empty()
                         player1 = Player(470, 580)
                         all_sprites_list.add(player1)
+
+
                         # This won't work when I try to use the subroutine, only when the level1 floor is declared here
                         if Level == "1":
                             Level1floor = Hardfloor(1000, 100, 0, 650)
                             all_sprites_list.add(Level1floor)
                             floors.add(Level1floor)
                             obstacles.add(Level1floor)
+                            for x in range(25):
+                                map1softfloor1 = Softfloor(300, 0 + (12022 * x), 550)
+                                all_sprites_list.add(map1softfloor1)
+                                floors.add(map1softfloor1)
+                                obstacles.add(map1softfloor1)
+                                map1softfloor2 = Softfloor(300, 600 + (1200 * x), 550)
+                                all_sprites_list.add(map1softfloor2)
+                                floors.add(map1softfloor2)
+                                obstacles.add(map1softfloor2)
+                                map1softfloor3 = Softfloor(300, 300 + (1200 * x), 450)
+                                all_sprites_list.add(map1softfloor3)
+                                floors.add(map1softfloor3)
+                                obstacles.add(map1softfloor3)
+                                map1softfloor4 = Softfloor(300, 0 + (1200 * x), 350)
+                                all_sprites_list.add(map1softfloor4)
+                                floors.add(map1softfloor4)
+                                obstacles.add(map1softfloor4)
+                                map1softfloor5 = Softfloor(300, 600 + (1200 * x), 350)
+                                all_sprites_list.add(map1softfloor5)
+                                floors.add(map1softfloor5)
+                                obstacles.add(map1softfloor5)
+                                map1softfloor6 = Softfloor(300, 900 + (1200 * x), 450)
+                                all_sprites_list.add(map1softfloor6)
+                                floors.add(map1softfloor6)
+                                obstacles.add(map1softfloor6)
 
                 if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_LEFT and player1.crouched == False:
@@ -515,10 +545,16 @@ while not done:
                                     player1.crouching = False
                                     player1.uncrouching = True
 
+                for bullet in bullet_sprite_list:
+                    bullet.update()
                 for sprite in all_sprites_list:
                         sprite.rect.x -= 2.5
                 if Level == "1":
                     Level1floor.rect.x += 2.5
+
+                for sprite in floors:
+                    if sprite.rect.x < -300:
+                        sprite.kill()
 
                 player1.update(timer)
                 screen.blit(background_image, (0, 0))
