@@ -1,5 +1,3 @@
-# Trying to allow the player to double tap down key to fall through floor, see lines 441 for start of attempt
-# Moved on - need to come back to this
 # Import Libraries
 import pygame
 import random
@@ -95,6 +93,45 @@ class Bullet(pygame.sprite.Sprite):
         #bullet_collision_list = pygame.sprite.spritecollide(self, obstacles, False)
         #if bullet_collision_list:
         #    self.kill()
+
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, ypos):
+        super().__init__()
+        self.image = player_still_image_left
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.x = 950
+        self.rect.y = ypos
+        self.health = 15
+        self.walkanimationnum = 0
+        self.jumping = False
+        self.state = "still"
+        # direction will be used to decide which image should be used when moving/standing in different directions
+        self.direction = "left"
+        self.speedx = -5
+        self.speedy = 0
+        self.supported = False
+        #Supported decides whether or not to make the enemy fall
+        self.accy = 0.16
+        self.accx = 0
+        self.gun = "pistol"
+        self.ammo = 12
+        self.shooting = False
+
+    def update(self):
+        self.rect.x += self.speedx
+        self.speedy += self.accy
+        self.rect.y += self.speedy
+        if self.jumping == False:
+            self.image = walkleft[self.walkanimationnum]
+            jump = random.randrange(0, 30)
+            if jump == 1:
+                self.jumping = True
+                self.state = "jumping"
+                self.speedy = -5.4
+        else:
+            self.image = player_jump_left
 
 class Pickups(pygame.sprite.Sprite):
     def __init__(self, xpos, ypos, gunnum):
@@ -331,6 +368,7 @@ floors = pygame.sprite.Group()
 bullet_sprite_list = pygame.sprite.Group()
 obstacles = pygame.sprite.Group()
 pickups_sprite_list = pygame.sprite.Group()
+enemies = pygame.sprite.Group()
 # Adding Objects to sprite lists
 # all_sprites_list.add(player1)
 # variables
@@ -346,8 +384,10 @@ gunnum = 0
 player1downcount = 0
 player1downtimer = 0
 Levelselect = False
+Enemy_spawn_timer = 0
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
+
  
 # -------- Main Program Loop -----------
 while not done:
@@ -420,7 +460,7 @@ while not done:
                             floors.add(Level1floor)
                             obstacles.add(Level1floor)
                             for x in range(25):
-                                map1softfloor1 = Softfloor(300, 0 + (12022 * x), 550)
+                                map1softfloor1 = Softfloor(300, 0 + (1200 * x), 550)
                                 all_sprites_list.add(map1softfloor1)
                                 floors.add(map1softfloor1)
                                 obstacles.add(map1softfloor1)
@@ -551,14 +591,24 @@ while not done:
                 if Level == "1":
                     Level1floor.rect.x += 2
 
+                if Enemy_spawn_timer == 30:
+                    Enemy_spawn_timer = 0
+                    ypos = random.randrange(110, 600)
+                    enemy = Enemy(ypos)
+                    enemies.add(enemy)
+                    all_sprites_list.add(enemy)
+
+                for enemy in enemies:
+                    enemy.update()
+
                 for sprite in floors:
                     if sprite.rect.x < -300:
                         sprite.kill()
 
                 player1.update(timer)
                 screen.blit(background_image, (0, 0))
-                # --- Limit to 60 frames per second
-                clock.tick(60)
+
+                Enemy_spawn_timer += 1
 
 
 
@@ -797,8 +847,7 @@ while not done:
 
             screen.blit(background_image, (0, 0))
 
-            # --- Limit to 60 frames per second
-            clock.tick(60)
+
 
             timer = timer + 1
             if timer % 60 == 0:
@@ -830,12 +879,18 @@ while not done:
                     Menu = True
                     setup = True
         drawstats()
+
+
+    #This is ran every frame regardless of the gamemode
     # --- Drawing code should go here
     all_sprites_list.draw(screen)
-    #Subroutine contains the only run if multiplayer and not game over
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
+    # --- Limit to 60 frames per second
+    clock.tick(60)
+
 # Close the window and quit.
 pygame.quit()
+
 
 
