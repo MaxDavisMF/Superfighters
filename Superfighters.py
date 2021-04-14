@@ -1,6 +1,5 @@
 # Trying to allow the player to double tap down key to fall through floor, see lines 441 for start of attempt
 # Moved on - need to come back to this
-#Need to commit once I fix the Level 1 floor bug
 # Import Libraries
 import pygame
 import random
@@ -548,9 +547,9 @@ while not done:
                 for bullet in bullet_sprite_list:
                     bullet.update()
                 for sprite in all_sprites_list:
-                        sprite.rect.x -= 2.5
+                        sprite.rect.x -= 2
                 if Level == "1":
-                    Level1floor.rect.x += 2.5
+                    Level1floor.rect.x += 2
 
                 for sprite in floors:
                     if sprite.rect.x < -300:
