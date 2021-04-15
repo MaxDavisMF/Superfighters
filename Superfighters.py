@@ -373,7 +373,7 @@ def drawstats():
         screen.blit(player1ammo, [410, 55])
 
 
-        #This function displays the winner after a game
+#This function displays the winner after a game
 def drawwinner(winner):
     if Multiplayer and Gameover:
         if winner == "Player 1":
@@ -385,6 +385,16 @@ def drawwinner(winner):
         nexttext = font.render("Press Space to return to menu", True, WHITE)
         screen.blit(nexttext, [250, 500])
 
+#This function draws the results after a singleplayer level
+def drawresult(result):
+    if result == False:
+        Resulttext = font.render("You Loose!", True, WHITE)
+        screen.blit(Resulttext, [400, 200])
+    if result == True:
+        Resulttext = font.render("Level Complete!", True, WHITE)
+        screen.blit(Resulttext, [370, 200])
+    resettext = font.render("Press Space to return to the main menu", True, WHITE)
+    screen.blit(resettext, [150, 280])
 # Instantiate Objects
 titlepic = Titleimage()
 map1floor = Hardfloor(1000, 100, 0, 650)
@@ -470,7 +480,7 @@ while not done:
                         Setup = True
                         Level = "3"
                         Levelselect = False
-            if Levelselect == False:
+            elif Levelselect == False:
                 if Setup == True:
                         Setup = False
                         all_sprites_list.empty()
@@ -479,7 +489,7 @@ while not done:
                         all_sprites_list.add(player1)
 
 
-                        # This won't work when I try to use the subroutine, only when the level1 floor is declared here
+                            # This won't work when I try to use the subroutine, only when the level1 floor is declared here
                         if Level == "1":
                             Level1floor = Hardfloor(1000, 100, 0, 650)
                             all_sprites_list.add(Level1floor)
@@ -626,6 +636,9 @@ while not done:
 
                 for enemy in enemies:
                     enemy.update()
+                    if enemy.rect.x < -42:
+                        enemy.kill()
+                        player1.lives -= 1
 
                 Enemy_hit_list = pygame.sprite.groupcollide(enemies, bullet_sprite_list, True, True)
 
@@ -650,6 +663,19 @@ while not done:
 
                 Enemy_spawn_timer += 1
 
+                if player1.lives == 0:
+                    Gameover = True
+                    Result = False
+        if Gameover:
+            for sprite in all_sprites_list:
+                sprite.kill()
+            screen.fill(BLACK)
+            drawresult(Result)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    Singleplayer = False
+                    Menu = True
+                    setup = True
 
 
 
