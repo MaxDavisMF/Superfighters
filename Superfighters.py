@@ -702,7 +702,7 @@ while not done:
                     L1 = open("L1highscore.txt", "w")
                     L1.write(str(score))
                     L1.close()
-                    L1topscore = score
+                    L1topscore = str(score)
                     score = 0
             for sprite in all_sprites_list:
                 sprite.kill()
