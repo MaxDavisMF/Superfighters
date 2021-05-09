@@ -3,6 +3,7 @@ import pygame
 import random
 import decimal
 import math
+import shelve
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -61,6 +62,10 @@ statfont = pygame.font.Font(None, 25)
 # create lists to cycle through for animations
 walkright = [player_walk_right1, player_walk_right2]
 walkleft = [player_walk_left1, player_walk_left2]
+# Load previous scores
+L = open("L1highscore.txt", "r")
+L1topscore = (L.read())
+L.close
 # Classes
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, spread, ydirection):
@@ -421,6 +426,8 @@ player1downcount = 0
 player1downtimer = 0
 Levelselect = False
 Enemy_spawn_timer = 0
+Leveltimer = 0
+score = 0
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
@@ -590,7 +597,6 @@ while not done:
                             player1.wascrouched = False
                         elif event.key == pygame.K_n:
                             if player1.aiming == True and player1.ammo > 0:
-                                player1.ammo -= 1
                                 player1.aiming = False
                                 x = random.randrange(0, 2)
                                 spread = random.randrange(2, 30)
@@ -659,14 +665,27 @@ while not done:
                 player1ammo = statfont.render("Ammo: ", True, WHITE)
                 player1ammo2 = statfont.render(str(player1.ammo), True, WHITE)
                 screen.blit(player1ammo, [410, 55])
-                screen.blit(player1ammo2, [470, 55 ])
+                screen.blit(player1ammo2, [470, 55])
 
                 Enemy_spawn_timer += 1
 
                 if player1.lives == 0:
                     Gameover = True
-                    Result = False
+                Leveltimer += 1
+
+                score += 1
         if Gameover:
+            if Leveltimer > 2000:
+                Result = True
+            elif Leveltimer < 2000:
+                Result = False
+            if Level == "1":
+                if score > int(L1topscore):
+                    L1 = open("L1highscore.txt", "w")
+                    L1.write(str(score))
+                    L1.close()
+                    L1topscore = score
+                    score = 0
             for sprite in all_sprites_list:
                 sprite.kill()
             screen.fill(BLACK)
