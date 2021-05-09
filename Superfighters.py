@@ -62,10 +62,16 @@ statfont = pygame.font.Font(None, 25)
 # create lists to cycle through for animations
 walkright = [player_walk_right1, player_walk_right2]
 walkleft = [player_walk_left1, player_walk_left2]
-# Load previous scores
-L = open("L1highscore.txt", "r")
-L1topscore = (L.read())
-L.close
+# Load top scores
+L1 = open("L1highscore.txt", "r")
+L1topscore = (L1.read())
+L1.close
+L2 = open("L2highscore.txt", "r")
+L2topscore = (L2.read())
+L2.close
+L3 = open("L3highscore.txt", "r")
+L3topscore = (L3.read())
+L3.close
 # Classes
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, spread, ydirection):
@@ -470,10 +476,22 @@ while not done:
                 Level1text = font.render("Press A for Level 1", True, WHITE)
                 Level2text = font.render("Press B for Level 2", True, WHITE)
                 Level3text = font.render("Press C for Level 3", True, WHITE)
+                Level1hs = statfont.render("L1 Highscore: ", True, WHITE)
+                Level1hsnum = statfont.render(L1topscore, True, WHITE)
+                Level2hs = statfont.render("L2 Highscore: ", True, WHITE)
+                Level2hsnum = statfont.render(L2topscore, True, WHITE)
+                Level3hs = statfont.render("L3 Highscore: ", True, WHITE)
+                Level3hsnum = statfont.render(L3topscore, True, WHITE)
                 screen.fill(BLACK)
                 screen.blit(Level1text, [350, 250])
+                screen.blit(Level1hs, [425, 290])
+                screen.blit(Level1hsnum, [550, 290])
                 screen.blit(Level2text, [350, 350])
+                screen.blit(Level2hs, [425, 390])
+                screen.blit(Level2hsnum, [550, 390])
                 screen.blit(Level3text, [350, 450])
+                screen.blit(Level3hs, [425, 490])
+                screen.blit(Level3hsnum, [550, 490])
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_a:
                         Setup = True
@@ -976,5 +994,3 @@ while not done:
 
 # Close the window and quit.
 pygame.quit()
-
-
