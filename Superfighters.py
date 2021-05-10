@@ -28,30 +28,74 @@ player_still_image_right = pygame.image.load("standright_1.png")
 player_still_image_right = pygame.transform.scale(player_still_image_right, (37, 63))
 player_still_image_left = pygame.image.load("standleft_1.png")
 player_still_image_left = pygame.transform.scale(player_still_image_left, (37, 63))
+
+player_still_image_right_red = pygame.image.load("standright_1red.png")
+player_still_image_right_red = pygame.transform.scale(player_still_image_right_red, (37, 63))
+player_still_image_left_red = pygame.image.load("standleft_1red.png")
+player_still_image_left_red = pygame.transform.scale(player_still_image_left_red, (37, 63))
+
 player_walk_right1 = pygame.image.load("walkright_1.png")
 player_walk_right1 = pygame.transform.scale(player_walk_right1, (42, 63))
-player_walk_right2 = pygame.image.load("walkright_3.png")
-player_walk_right2 = pygame.transform.scale(player_walk_right2, (42, 63))
+# player_walk_right2 = pygame.image.load("walkright_2.png")
+# player_walk_right2 = pygame.transform.scale(player_walk_right2, (42, 63))
+player_walk_right3 = pygame.image.load("walkright_3.png")
+player_walk_right3 = pygame.transform.scale(player_walk_right3, (42, 63))
 player_walk_left1 = pygame.image.load("walkleft_1.png")
 player_walk_left1 = pygame.transform.scale(player_walk_left1, (42, 63))
-player_walk_left2 = pygame.image.load("walkleft_3.png")
-player_walk_left2 = pygame.transform.scale(player_walk_left2, (42, 63))
+# player_walk_left2 = pygame.image.load("walkleft_2.png")
+# player_walk_left2 = pygame.transform.scale(player_walk_left2, (42, 63))
+player_walk_left3 = pygame.image.load("walkleft_3.png")
+player_walk_left3 = pygame.transform.scale(player_walk_left3, (42, 63))
+
+player_walk_right1_red = pygame.image.load("walkright_1red.png")
+player_walk_right1_red = pygame.transform.scale(player_walk_right1_red, (42, 63))
+player_walk_right3_red = pygame.image.load("walkright_3red.png")
+player_walk_right3_red = pygame.transform.scale(player_walk_right3_red, (42, 63))
+player_walk_left1_red = pygame.image.load("walkleft_1red.png")
+player_walk_left1_red = pygame.transform.scale(player_walk_left1_red, (42, 63))
+player_walk_left3_red = pygame.image.load("walkleft_3red.png")
+player_walk_left3_red = pygame.transform.scale(player_walk_left3_red, (42, 63))
+
 player_jump_right = pygame.image.load("jumpright.png")
 player_jump_right = pygame.transform.scale(player_jump_right, (42, 63))
 player_jump_left = pygame.image.load("jumpleft.png")
 player_jump_left = pygame.transform.scale(player_jump_left, (42, 63))
+
+player_jump_right_red = pygame.image.load("jumprightred.png")
+player_jump_right_red = pygame.transform.scale(player_jump_right_red, (42, 63))
+player_jump_left_red = pygame.image.load("jumpleftred.png")
+player_jump_left_red = pygame.transform.scale(player_jump_left_red, (42, 63))
+
 player_duck_left = pygame.image.load("duckleft.png")
 player_duck_left = pygame.transform.scale(player_duck_left, (33, 45))
 player_duck_right = pygame.image.load("duckright.png")
 player_duck_right = pygame.transform.scale(player_duck_right, (33, 45))
+
+player_duck_left_red = pygame.image.load("duckleftred.png")
+player_duck_left_red = pygame.transform.scale(player_duck_left_red, (33, 45))
+player_duck_right_red = pygame.image.load("duckrightred.png")
+player_duck_right_red = pygame.transform.scale(player_duck_right_red, (33, 45))
+
 player_pistol_right = pygame.image.load("pistolaimright.png")
 player_pistol_right = pygame.transform.scale(player_pistol_right, (50, 63))
 player_pistol_left = pygame.image.load("pistolaimleft.png")
 player_pistol_left = pygame.transform.scale(player_pistol_left,  (50, 63))
+
+player_pistol_right_red = pygame.image.load("pistolaimrightred.png")
+player_pistol_right_red = pygame.transform.scale(player_pistol_right_red, (50, 63))
+player_pistol_left_red = pygame.image.load("pistolaimleftred.png")
+player_pistol_left_red = pygame.transform.scale(player_pistol_left_red,  (50, 63))
+
 player_magnum_right = pygame.image.load("magnumaimright.png")
 player_magnum_right = pygame.transform.scale(player_magnum_right, (50, 63))
 player_magnum_left = pygame.image.load("magnumaimleft.png")
 player_magnum_left = pygame.transform.scale(player_magnum_left,  (50, 63))
+
+player_magnum_right_red = pygame.image.load("magnumaimrightred.png")
+player_magnum_right_red = pygame.transform.scale(player_magnum_right_red, (50, 63))
+player_magnum_left_red = pygame.image.load("magnumaimleftred.png")
+player_magnum_left_red = pygame.transform.scale(player_magnum_left_red,  (50, 63))
+
 magnum = pygame.image.load("magnum.png")
 magnum = pygame.transform.scale(magnum, (30, 18))
 pistol = pygame.image.load("pistol.png")
@@ -60,8 +104,10 @@ pistol = pygame.transform.scale(pistol, (20, 18))
 font = pygame.font.Font(None, 50)
 statfont = pygame.font.Font(None, 25)
 # create lists to cycle through for animations
-walkright = [player_walk_right1, player_walk_right2]
-walkleft = [player_walk_left1, player_walk_left2]
+walkright = [player_walk_right1, player_walk_right3]
+walkleft = [player_walk_left1, player_walk_left3]
+walkrightred = [player_walk_right1_red, player_walk_right3_red]
+walkleftred = [player_walk_left1_red, player_walk_left3_red]
 # Load top scores
 L1 = open("L1highscore.txt", "r")
 L1topscore = (L1.read())
@@ -109,7 +155,7 @@ class Bullet(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, ypos):
         super().__init__()
-        self.image = player_still_image_left
+        self.image = player_still_image_left_red
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = 1050
@@ -129,8 +175,10 @@ class Enemy(pygame.sprite.Sprite):
         self.gun = "pistol"
         self.ammo = 12
         self.shooting = False
+        self.timer = 0
 
     def update(self):
+        self.timer += 1
         self.rect.x += self.speedx
         if not self.supported:
             self.speedy += self.accy
@@ -151,14 +199,19 @@ class Enemy(pygame.sprite.Sprite):
                     self.rect.y = (floor.rect.y - 63)
 
         if self.jumping == False:
-            self.image = walkleft[self.walkanimationnum]
+            if self.timer % 10 == 0:
+                self.timer = 0
+                self.walkanimationnum += 1
+                if self.walkanimationnum == 2:
+                    self.walkanimationnum = 0
+                self.image = walkleftred[self.walkanimationnum]
             jump = random.randrange(0, 30)
             if jump == 1 and self.supported == True:
                 self.jumping = True
                 self.state = "jumping"
                 self.speedy = -5.4
         else:
-            self.image = player_jump_left
+            self.image = player_jump_left_red
 
 
 class Pickups(pygame.sprite.Sprite):
@@ -218,7 +271,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.x = self.rect.x + self.speedx
             # Walking animation
             if self.state == "walk" and self.supported == True:
-                if timer % 5 == 0:
+                if timer % 3 == 0:
                     self.walkanimationnum += 1
                     if self.walkanimationnum == 2:
                         self.walkanimationnum = 0
