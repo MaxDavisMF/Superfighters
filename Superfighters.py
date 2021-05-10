@@ -1,5 +1,3 @@
-# Trying to allow the player to double tap down key to fall through floor, see lines 441 for start of attempt
-# Moved on - need to come back to this
 # Import Libraries
 import pygame
 import random
@@ -603,19 +601,19 @@ while not done:
 
                         if Level == "2":
                             for x in range(25):
-                                map2softfloor1 = Softfloor(300, 0 + (900 * x), 550)
+                                map2softfloor1 = Softfloor(300, 0 + (1200 * x), 550)
                                 all_sprites_list.add(map2softfloor1)
                                 floors.add(map2softfloor1)
                                 obstacles.add(map2softfloor1)
-                                map2softfloor2 = Softfloor(300, 300 + (900 * x), 450)
+                                map2softfloor2 = Softfloor(300, 300 + (1200 * x), 450)
                                 all_sprites_list.add(map2softfloor2)
                                 floors.add(map2softfloor2)
                                 obstacles.add(map2softfloor2)
-                                map2softfloor3 = Softfloor(300, 600 + (900 * x), 350)
+                                map2softfloor3 = Softfloor(300, 600 + (1200 * x), 350)
                                 all_sprites_list.add(map2softfloor3)
                                 floors.add(map2softfloor3)
                                 obstacles.add(map2softfloor3)
-                                map2softfloor4 = Softfloor(300, 900 + (900 * x), 450)
+                                map2softfloor4 = Softfloor(300, 900 + (1200 * x), 450)
                                 all_sprites_list.add(map2softfloor4)
                                 floors.add(map2softfloor4)
                                 obstacles.add(map2softfloor4)
@@ -1070,3 +1068,5 @@ while not done:
 
 # Close the window and quit.
 pygame.quit()
+
+
