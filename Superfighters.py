@@ -778,6 +778,13 @@ while not done:
                     L1.close()
                     L1topscore = str(score)
                     score = 0
+            if Level == "2":
+                if score > int(L2topscore):
+                    L2 = open("L2highscore.txt", "w")
+                    L2.write(str(score))
+                    L2.close()
+                    L2topscore = str(score)
+                    score = 0
             for sprite in all_sprites_list:
                 sprite.kill()
             screen.fill(BLACK)
@@ -1068,5 +1075,6 @@ while not done:
 
 # Close the window and quit.
 pygame.quit()
+
 
 
