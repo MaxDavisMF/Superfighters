@@ -458,7 +458,7 @@ def drawresult(result):
         Resulttext = font.render("Level Complete!", True, WHITE)
         screen.blit(Resulttext, [370, 200])
     resettext = font.render("Press Space to return to the main menu", True, WHITE)
-    screen.blit(resettext, [150, 280])
+    screen.blit(resettext, [175, 280])
 # Instantiate Objects
 titlepic = Titleimage()
 map1floor = Hardfloor(1000, 100, 0, 650)
@@ -618,7 +618,27 @@ while not done:
                                 floors.add(map2softfloor4)
                                 obstacles.add(map2softfloor4)
 
-
+                        if Level == "3":
+                            for x in range (25):
+                                for y in range (3):
+                                    map3softfloor1 = Softfloor(100, 0 + (1200 * x), 350 + (y * 100))
+                                    all_sprites_list.add(map3softfloor1)
+                                    floors.add(map3softfloor1)
+                                    map3softfloor2 = Softfloor(100, 200 + (1200 * x), 350 + (y * 100))
+                                    all_sprites_list.add(map3softfloor2)
+                                    floors.add(map3softfloor2)
+                                    map3softfloor3 = Softfloor(100, 400 + (1200 * x), 350 + (y * 100))
+                                    all_sprites_list.add(map3softfloor3)
+                                    floors.add(map3softfloor3)
+                                    map3softfloor4 = Softfloor(100, 600 + (1200 * x), 350 + (y * 100))
+                                    all_sprites_list.add(map3softfloor4)
+                                    floors.add(map3softfloor4)
+                                    map3softfloor5 = Softfloor(100, 800 + (1200 * x), 350 + (y * 100))
+                                    all_sprites_list.add(map3softfloor5)
+                                    floors.add(map3softfloor5)
+                                    map3softfloor6 = Softfloor(100, 1000 + (1200 * x), 350 + (y * 100))
+                                    all_sprites_list.add(map3softfloor6)
+                                    floors.add(map3softfloor6)
 
                 if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_LEFT and player1.crouched == False:
@@ -785,6 +805,14 @@ while not done:
                     L2.close()
                     L2topscore = str(score)
                     score = 0
+            if Level == "3":
+                if score > int(L3topscore):
+                    L3 = open("L3highscore.txt", "w")
+                    L3.write(str(score))
+                    L3.close()
+                    L3topscore = str(score)
+                    score = 0
+                    
             for sprite in all_sprites_list:
                 sprite.kill()
             screen.fill(BLACK)
@@ -1075,6 +1103,5 @@ while not done:
 
 # Close the window and quit.
 pygame.quit()
-
 
 
