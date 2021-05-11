@@ -207,8 +207,8 @@ class Enemy(pygame.sprite.Sprite):
                 self.image = walkleftred[self.walkanimationnum]
             jump = random.randrange(0, 30)
             if Level == "1" or "2":
-                if player1.rect.x == self.rect.x:
-                        if (jump == 1 or 2) and self.supported == True:
+                if player1.rect.y == self.rect.y:
+                        if (jump == 1 or jump == 2 or jump == 3) and self.supported == True:
                             self.jumping = True
                             self.state = "jumping"
                             self.speedy = -5.4
@@ -218,7 +218,7 @@ class Enemy(pygame.sprite.Sprite):
                             self.state = "jumping"
                             self.speedy = -5.4
             if Level == "3":
-                if (jump == 1 or 2) and self.supported == True:
+                if (jump == 1 or jump == 2 or jump == 3) and self.supported == True:
                     self.jumping = True
                     self.state = "jumping"
                     self.speedy = -5.4
@@ -1116,5 +1116,6 @@ while not done:
 
 # Close the window and quit.
 pygame.quit()
+
 
 
