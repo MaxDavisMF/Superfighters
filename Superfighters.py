@@ -6,7 +6,7 @@ import math
 import shelve
 # Define some colors
 BLACK = (0, 0, 0)
-WHITE = (255, 255, 0)
+WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 GREY = (128, 128, 128)
@@ -500,6 +500,7 @@ Levelselect = False
 Enemy_spawn_timer = 0
 Leveltimer = 0
 score = 0
+mapselect = True
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
@@ -842,271 +843,296 @@ while not done:
 
 
     if Multiplayer:
-        if not Gameover:
-            if Setup:
-                Setup = False
-                all_sprites_list.empty()
-                floors.empty()
-                player1 = Player(900, 580)
-                player2 = Player(100, 580)
-                all_sprites_list.add(player1)
-                all_sprites_list.add(player2)
-
-                if Map1:
-                    map1create()
+        if mapselect:
+            Map1text = font.render("Press A for Map 1", True, WHITE)
+            Map2text = font.render("Press B for Map 2", True, WHITE)
+            Map3text = font.render("Press C for Map 3", True, WHITE)
+            screen.fill(BLACK)
+            screen.blit(Map1text, [350, 250])
+            screen.blit(Map2text, [350, 350])
+            screen.blit(Map3text, [350, 450])
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT and player1.crouched == False:
-                    player1.speedx = -5
-                    player1.state = "walk"
-                    player1.direction = "left"
-                elif event.key == pygame.K_RIGHT and player1.crouched == False:
-                    player1.speedx = 5
-                    player1.state = "walk"
-                    player1.direction = "right"
-                elif event.key == pygame.K_UP and player1.supported == True:
-                    player1.speedy = -5.4
-                    player1.supported = False
-                    player1.state = "jump"
-                elif event.key == pygame.K_DOWN and player1.supported == True and player1.shooting == False:
-                    player1.state = "crouched"
-                    player1.crouched = True
-                    player1.uncrouching = True
-                    if player1.crouching == True:
-                        player1.rect.y += 18
-                        player1.crouching = False
-                    # This code is for double tapping the down key to drop from a floor
-                    #player1downcount += 1
-                    #if player1downcount == 2 and player1downtimer <= 20:
-                    #    player1downcount = 0
-                    #    player1.supported = False
-                    #    player1.dropping = True
-                    #aplayer1downtimer = 0
+                if event.key == pygame.K_a:
+                    Setup = True
+                    Mapselect = False
+                    Map = "1"
+                if event.key == pygame.K_b:
+                    Setup = True
+                    Map = "2"
+                    Mapselect = False
+                if event.key == pygame.K_c:
+                    Setup = True
+                    Map = "3"
+                    Mapselect = False
 
-                elif event.key == pygame.K_n and player1.supported == True:
-                    player1.aiming = True
-                    player1.shooting = True
-                    # This is to adjust the coordinates of the player sprite so that he stands correctly
-                    if player1.crouched == True:
-                        player1.crouched = False
-                        # Remember that the player was crocuhed
-                        player1.wascrouched = True
-                        # Adjust coords of player
-                        player1.rect.y -= 18
-                        # So that the player is not shifted up again if the player lets go of the down key
-                        player1.uncrouching = False
-                        #To readjust the sprite when the player stops shooting.
-                        player1.crouching = True
-                elif event.key == pygame.K_k:
-                    pickup_player_contact = pygame.sprite.spritecollide(player1, pickups_sprite_list, False)
-                    for gun in pickup_player_contact:
-                        player1.gun = gun.type
-                        if gun.type == "magnum":
-                            player1.ammo = 5
-                        elif gun.type == "pistol":
-                            player1.ammo = 12
-                        gun.kill()
+        elif not mapselect:
+            if not Gameover:
+                if Setup:
+                    Setup = False
+                    all_sprites_list.empty()
+                    floors.empty()
+                    player1 = Player(900, 580)
+                    player2 = Player(100, 580)
+                    all_sprites_list.add(player1)
+                    all_sprites_list.add(player2)
 
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT and player1.crouched == False:
-                    player1.speedx = 0
-                    player1.state = "still"
-                elif event.key == pygame.K_RIGHT and player1.crouched == False:
-                    player1.speedx = 0
-                    player1.state = "still"
-                elif event.key == pygame.K_DOWN:
-                    if player1.uncrouching == True:
-                        player1.rect.y -= 18
-                        player1.uncrouching = False
-                    player1.state = "still"
-                    player1.crouching = True
-                    player1.crouched = False
-                    player1.wascrouched = False
-                elif event.key == pygame.K_n:
-                    if player1.aiming == True and player1.ammo > 0:
-                        player1.ammo -= 1
-                        player1.aiming = False
-                        x = random.randrange(0, 2)
-                        spread = random.randrange(2, 30)
-                        #Generate the amount of spread
-                        if x == 1:
-                            Ydirection = True
-                        else:
-                            Ydirection = False
-                        # Generate which way the spread goes
-                        if player1.direction == "right":
-                            # Coords adjusted a bit so that the bullet dies not collide with the player and dissapear straight away once created
-                            bullet = Bullet((player1.rect.x + 55), (player1.rect.y + 9), spread, Ydirection)
-                            bullet.direction = "right"
-                            all_sprites_list.add(bullet)
-                            bullet_sprite_list.add(bullet)
-                        elif player1.direction == "left":
-                            bullet = Bullet(player1.rect.x - 12, player1.rect.y + 9, spread, Ydirection)
-                            bullet.direction = "left"
-                            all_sprites_list.add(bullet)
-                            bullet_sprite_list.add(bullet)
-                        bullet.gun = player1.gun
-                    player1.shooting = False
-                    if player1.wascrouched == True:
+                    if Map == "1":
+                        map1create()
+
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT and player1.crouched == False:
+                        player1.speedx = -5
+                        player1.state = "walk"
+                        player1.direction = "left"
+                    elif event.key == pygame.K_RIGHT and player1.crouched == False:
+                        player1.speedx = 5
+                        player1.state = "walk"
+                        player1.direction = "right"
+                    elif event.key == pygame.K_UP and player1.supported == True:
+                        player1.speedy = -5.4
+                        player1.supported = False
+                        player1.state = "jump"
+                    elif event.key == pygame.K_DOWN and player1.supported == True and player1.shooting == False:
+                        player1.state = "crouched"
+                        player1.crouched = True
+                        player1.uncrouching = True
                         if player1.crouching == True:
                             player1.rect.y += 18
-                            player1.wascrouched = False
-                            player1.crouched = True
                             player1.crouching = False
-                            player1.uncrouching = True
+                        # This code is for double tapping the down key to drop from a floor
+                        #player1downcount += 1
+                        #if player1downcount == 2 and player1downtimer <= 20:
+                        #    player1downcount = 0
+                        #    player1.supported = False
+                        #    player1.dropping = True
+                        #aplayer1downtimer = 0
+
+                    elif event.key == pygame.K_n and player1.supported == True:
+                        player1.aiming = True
+                        player1.shooting = True
+                        # This is to adjust the coordinates of the player sprite so that he stands correctly
+                        if player1.crouched == True:
+                            player1.crouched = False
+                            # Remember that the player was crocuhed
+                            player1.wascrouched = True
+                            # Adjust coords of player
+                            player1.rect.y -= 18
+                            # So that the player is not shifted up again if the player lets go of the down key
+                            player1.uncrouching = False
+                            #To readjust the sprite when the player stops shooting.
+                            player1.crouching = True
+                    elif event.key == pygame.K_k:
+                        pickup_player_contact = pygame.sprite.spritecollide(player1, pickups_sprite_list, False)
+                        for gun in pickup_player_contact:
+                            player1.gun = gun.type
+                            if gun.type == "magnum":
+                                player1.ammo = 5
+                            elif gun.type == "pistol":
+                                player1.ammo = 12
+                            gun.kill()
+
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT and player1.crouched == False:
+                        player1.speedx = 0
+                        player1.state = "still"
+                    elif event.key == pygame.K_RIGHT and player1.crouched == False:
+                        player1.speedx = 0
+                        player1.state = "still"
+                    elif event.key == pygame.K_DOWN:
+                        if player1.uncrouching == True:
+                            player1.rect.y -= 18
+                            player1.uncrouching = False
+                        player1.state = "still"
+                        player1.crouching = True
+                        player1.crouched = False
+                        player1.wascrouched = False
+                    elif event.key == pygame.K_n:
+                        if player1.aiming == True and player1.ammo > 0:
+                            player1.ammo -= 1
+                            player1.aiming = False
+                            x = random.randrange(0, 2)
+                            spread = random.randrange(2, 30)
+                            #Generate the amount of spread
+                            if x == 1:
+                                Ydirection = True
+                            else:
+                                Ydirection = False
+                            # Generate which way the spread goes
+                            if player1.direction == "right":
+                                # Coords adjusted a bit so that the bullet dies not collide with the player and dissapear straight away once created
+                                bullet = Bullet((player1.rect.x + 55), (player1.rect.y + 9), spread, Ydirection)
+                                bullet.direction = "right"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            elif player1.direction == "left":
+                                bullet = Bullet(player1.rect.x - 12, player1.rect.y + 9, spread, Ydirection)
+                                bullet.direction = "left"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            bullet.gun = player1.gun
+                        player1.shooting = False
+                        if player1.wascrouched == True:
+                            if player1.crouching == True:
+                                player1.rect.y += 18
+                                player1.wascrouched = False
+                                player1.crouched = True
+                                player1.crouching = False
+                                player1.uncrouching = True
 
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a and player2.crouched == False:
-                    player2.speedx = -5
-                    player2.state = "walk"
-                    player2.direction = "left"
-                elif event.key == pygame.K_d and player2.crouched == False:
-                    player2.speedx = 5
-                    player2.state = "walk"
-                    player2.direction = "right"
-                elif event.key == pygame.K_w and player2.supported == True:
-                    player2.speedy = -5.4
-                    player2.supported = False
-                    player2.state = "jump"
-                elif event.key == pygame.K_s and player2.supported == True and player2.shooting == False:
-                    player2.state = "crouched"
-                    player2.crouched = True
-                    player2.uncrouching = True
-                    if player2.crouching == True:
-                        player2.rect.y += 18
-                        player2.crouching = False
-                elif event.key == pygame.K_2 and player2.supported == True:
-                    player2.aiming = True
-                    player2.shooting = True
-                    # This is to adjust the coordinates of the player sprite so that he stands correctly
-                    if player2.crouched == True:
-                        player2.crouched = False
-                        # Remember that the player was crocuhed
-                        player2.wascrouched = True
-                        # Adjust coords of player
-                        player2.rect.y -= 18
-                        # So that the player is not shifted up again if the player lets go of the down key
-                        player2.uncrouching = False
-                        #To readjust the sprite when the player stops shooting.
-                        player2.crouching = True
-                elif event.key == pygame.K_q:
-                    pickup_player_contact = pygame.sprite.spritecollide(player2, pickups_sprite_list, False)
-                    for gun in pickup_player_contact:
-                        player2.gun = gun.type
-                        if gun.type == "magnum":
-                            player2.ammo = 5
-                        elif gun.type == "pistol":
-                            player2.ammo = 12
-                        gun.kill()
-
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a and player2.crouched == False:
-                    player2.speedx = 0
-                    player2.state = "still"
-                elif event.key == pygame.K_d and player2.crouched == False:
-                    player2.speedx = 0
-                    player2.state = "still"
-                elif event.key == pygame.K_s:
-                    if player2.uncrouching == True:
-                        player2.rect.y -= 18
-                        player2.uncrouching = False
-                    player2.state = "still"
-                    player2.crouching = True
-                    player2.crouched = False
-                    player2.wascrouched = False
-                elif event.key == pygame.K_2:
-                    if player2.aiming == True and player2.ammo > 0:
-                        player2.ammo -= 1
-                        player2.aiming = False
-                        x = random.randrange(0, 2)
-                        spread = random.randrange(2, 15)
-                        # Generate the amount of spread
-                        if x == 1:
-                            Ydirection = True
-                        else:
-                            Ydirection = False
-                        # Generate which way the spread goes
-                        if player2.direction == "right":
-                            # Coords adjusted a bit so that the bullet does not collide with the player straight away when created
-                            bullet = Bullet((player2.rect.x + 55), (player2.rect.y + 9), spread, Ydirection)
-                            bullet.direction = "right"
-                            all_sprites_list.add(bullet)
-                            bullet_sprite_list.add(bullet)
-                        elif player2.direction == "left":
-                            bullet = Bullet(player2.rect.x - 12, player2.rect.y + 9, spread, Ydirection)
-                            bullet.direction = "left"
-                            all_sprites_list.add(bullet)
-                            bullet_sprite_list.add(bullet)
-                        bullet.gun = player2.gun
-                    player2.shooting = False
-                    if player2.wascrouched == True:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a and player2.crouched == False:
+                        player2.speedx = -5
+                        player2.state = "walk"
+                        player2.direction = "left"
+                    elif event.key == pygame.K_d and player2.crouched == False:
+                        player2.speedx = 5
+                        player2.state = "walk"
+                        player2.direction = "right"
+                    elif event.key == pygame.K_w and player2.supported == True:
+                        player2.speedy = -5.4
+                        player2.supported = False
+                        player2.state = "jump"
+                    elif event.key == pygame.K_s and player2.supported == True and player2.shooting == False:
+                        player2.state = "crouched"
+                        player2.crouched = True
+                        player2.uncrouching = True
                         if player2.crouching == True:
                             player2.rect.y += 18
-                            player2.wascrouched = False
-                            player2.crouched = True
                             player2.crouching = False
-                            player2.uncrouching = True
+                    elif event.key == pygame.K_2 and player2.supported == True:
+                        player2.aiming = True
+                        player2.shooting = True
+                        # This is to adjust the coordinates of the player sprite so that he stands correctly
+                        if player2.crouched == True:
+                            player2.crouched = False
+                            # Remember that the player was crocuhed
+                            player2.wascrouched = True
+                            # Adjust coords of player
+                            player2.rect.y -= 18
+                            # So that the player is not shifted up again if the player lets go of the down key
+                            player2.uncrouching = False
+                            #To readjust the sprite when the player stops shooting.
+                            player2.crouching = True
+                    elif event.key == pygame.K_q:
+                        pickup_player_contact = pygame.sprite.spritecollide(player2, pickups_sprite_list, False)
+                        for gun in pickup_player_contact:
+                            player2.gun = gun.type
+                            if gun.type == "magnum":
+                                player2.ammo = 5
+                            elif gun.type == "pistol":
+                                player2.ammo = 12
+                            gun.kill()
 
-            player1.update(timer)
-            player2.update(timer)
-            for bullet in bullet_sprite_list:
-                bullet.update()
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_a and player2.crouched == False:
+                        player2.speedx = 0
+                        player2.state = "still"
+                    elif event.key == pygame.K_d and player2.crouched == False:
+                        player2.speedx = 0
+                        player2.state = "still"
+                    elif event.key == pygame.K_s:
+                        if player2.uncrouching == True:
+                            player2.rect.y -= 18
+                            player2.uncrouching = False
+                        player2.state = "still"
+                        player2.crouching = True
+                        player2.crouched = False
+                        player2.wascrouched = False
+                    elif event.key == pygame.K_2:
+                        if player2.aiming == True and player2.ammo > 0:
+                            player2.ammo -= 1
+                            player2.aiming = False
+                            x = random.randrange(0, 2)
+                            spread = random.randrange(2, 15)
+                            # Generate the amount of spread
+                            if x == 1:
+                                Ydirection = True
+                            else:
+                                Ydirection = False
+                            # Generate which way the spread goes
+                            if player2.direction == "right":
+                                # Coords adjusted a bit so that the bullet does not collide with the player straight away when created
+                                bullet = Bullet((player2.rect.x + 55), (player2.rect.y + 9), spread, Ydirection)
+                                bullet.direction = "right"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            elif player2.direction == "left":
+                                bullet = Bullet(player2.rect.x - 12, player2.rect.y + 9, spread, Ydirection)
+                                bullet.direction = "left"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            bullet.gun = player2.gun
+                        player2.shooting = False
+                        if player2.wascrouched == True:
+                            if player2.crouching == True:
+                                player2.rect.y += 18
+                                player2.wascrouched = False
+                                player2.crouched = True
+                                player2.crouching = False
+                                player2.uncrouching = True
 
-            if pickup_timer == 599:
-                for item in pickups_sprite_list:
-                    item.kill()
-                gunnum = random.randrange(0, 2)
-                spawn1 = Pickups(490, 625, gunnum)
-                all_sprites_list.add(spawn1)
-                pickups_sprite_list.add(spawn1)
-                gunnum = random.randrange(0, 2)
-                spawn2 = Pickups(490, 425, gunnum)
-                all_sprites_list.add(spawn2)
-                pickups_sprite_list.add(spawn2)
-                gunnum = random.randrange(0, 2)
-                spawn3 = Pickups(190, 325, gunnum)
-                all_sprites_list.add(spawn3)
-                pickups_sprite_list.add(spawn3)
-                gunnum = random.randrange(0, 2)
-                spawn4 = Pickups(790, 325, gunnum)
-                all_sprites_list.add(spawn4)
-                pickups_sprite_list.add(spawn4)
+                player1.update(timer)
+                player2.update(timer)
+                for bullet in bullet_sprite_list:
+                    bullet.update()
 
-            screen.blit(background_image, (0, 0))
+                if pickup_timer == 599:
+                    for item in pickups_sprite_list:
+                        item.kill()
+                    gunnum = random.randrange(0, 2)
+                    spawn1 = Pickups(490, 625, gunnum)
+                    all_sprites_list.add(spawn1)
+                    pickups_sprite_list.add(spawn1)
+                    gunnum = random.randrange(0, 2)
+                    spawn2 = Pickups(490, 425, gunnum)
+                    all_sprites_list.add(spawn2)
+                    pickups_sprite_list.add(spawn2)
+                    gunnum = random.randrange(0, 2)
+                    spawn3 = Pickups(190, 325, gunnum)
+                    all_sprites_list.add(spawn3)
+                    pickups_sprite_list.add(spawn3)
+                    gunnum = random.randrange(0, 2)
+                    spawn4 = Pickups(790, 325, gunnum)
+                    all_sprites_list.add(spawn4)
+                    pickups_sprite_list.add(spawn4)
+
+                screen.blit(background_image, (0, 0))
 
 
 
-            timer = timer + 1
-            if timer % 60 == 0:
-                timer = 0
-            player1downtimer += 1
-            if player1downtimer == 15:
-                player1.dropping = False
-                player1downtimer = 0
-            pickup_timer += 1
-            if pickup_timer % 600 ==0:
-                pickup_timer = 0
+                timer = timer + 1
+                if timer % 60 == 0:
+                    timer = 0
+                player1downtimer += 1
+                if player1downtimer == 15:
+                    player1.dropping = False
+                    player1downtimer = 0
+                pickup_timer += 1
+                if pickup_timer % 600 ==0:
+                    pickup_timer = 0
 
-            if player1.health <= 0:
-                winner = "Player 2"
-                for sprite in all_sprites_list:
-                    sprite.kill()
-                Gameover = True
-            if player2.health <= 0:
-                winner = "Player 1"
-                for sprite in all_sprites_list:
-                    sprite.kill()
-                Gameover = True
-        elif Gameover:
-            screen.fill(BLACK)
-            drawwinner(winner)
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    Multiplayer = False
-                    Menu = True
-                    Setup = True
-        drawstats()
+                if player1.health <= 0:
+                    winner = "Player 2"
+                    for sprite in all_sprites_list:
+                        sprite.kill()
+                    Gameover = True
+                if player2.health <= 0:
+                    winner = "Player 1"
+                    for sprite in all_sprites_list:
+                        sprite.kill()
+                    Gameover = True
+            elif Gameover:
+                screen.fill(BLACK)
+                drawwinner(winner)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        Multiplayer = False
+                        Menu = True
+                        Setup = True
+            drawstats()
 
 
     #This is ran every frame regardless of the gamemode
