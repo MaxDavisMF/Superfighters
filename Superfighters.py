@@ -512,9 +512,12 @@ while not done:
             done = True
     
     if Menu:
+        print(Setup)
         if Setup:
             Setup = False
-            all_sprites_list.empty()
+            for sprite in all_sprites_list:
+                sprite.kill()
+            titlepic = Titleimage()
             all_sprites_list.add(titlepic)
             Multiplayertext = font.render("Press 1 to play Multiplayer!", True, WHITE)
             Singleplayertext = font.render("Press 2 to play Singleplayer!", True, WHITE)
@@ -834,7 +837,7 @@ while not done:
                 if event.key == pygame.K_SPACE:
                     Singleplayer = False
                     Menu = True
-                    setup = True
+                    Setup = True
 
 
 
@@ -1102,7 +1105,7 @@ while not done:
                 if event.key == pygame.K_SPACE:
                     Multiplayer = False
                     Menu = True
-                    setup = True
+                    Setup = True
         drawstats()
 
 
@@ -1116,6 +1119,5 @@ while not done:
 
 # Close the window and quit.
 pygame.quit()
-
 
 
