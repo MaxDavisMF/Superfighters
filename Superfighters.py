@@ -500,7 +500,7 @@ Levelselect = False
 Enemy_spawn_timer = 0
 Leveltimer = 0
 score = 0
-mapselect = True
+Mapselect = True
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
@@ -513,7 +513,6 @@ while not done:
             done = True
     
     if Menu:
-        print(Setup)
         if Setup:
             Setup = False
             for sprite in all_sprites_list:
@@ -843,7 +842,7 @@ while not done:
 
 
     if Multiplayer:
-        if mapselect:
+        if Mapselect:
             Map1text = font.render("Press A for Map 1", True, WHITE)
             Map2text = font.render("Press B for Map 2", True, WHITE)
             Map3text = font.render("Press C for Map 3", True, WHITE)
@@ -866,7 +865,7 @@ while not done:
                     Map = "3"
                     Mapselect = False
 
-        elif not mapselect:
+        elif not Mapselect:
             if not Gameover:
                 if Setup:
                     Setup = False
