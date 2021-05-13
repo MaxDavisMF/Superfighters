@@ -17,12 +17,16 @@ pygame.init()
 size = (1000, 750)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Superfighters")
-
 # Images
 Menu_image = pygame.image.load("Home_screen_title.png").convert()
 Menu_image = pygame.transform.scale(Menu_image, (700, 150))
-background_image = pygame.image.load("citybackground.png").convert()
-background_image = pygame.transform.scale(background_image, (1000, 750))
+background_image1 = pygame.image.load("citybackground.png").convert()
+background_image1 = pygame.transform.scale(background_image1, (1000, 750))
+background_image2 = pygame.image.load("Darkcitybackground.png").convert()
+background_image2 = pygame.transform.scale(background_image2, (1000, 750))
+background_image3 = pygame.image.load("Spacebackground.png").convert()
+background_image3 = pygame.transform.scale(background_image3, (1000, 750))
+
 
 player_still_image_right = pygame.image.load("standright_1.png")
 player_still_image_right = pygame.transform.scale(player_still_image_right, (37, 63))
@@ -393,32 +397,36 @@ class Titleimage(pygame.sprite.Sprite):
 
 # These funtions will create the maps
 # Map1:
-def map1create():
+def mapcreate(map):
     map1floor = Hardfloor(1000, 100, 0, 650)
     all_sprites_list.add(map1floor)
     floors.add(map1floor)
     obstacles.add(map1floor)
-    map1softfloor1 = Softfloor(300, 50, 550)
-    all_sprites_list.add(map1softfloor1)
-    floors.add(map1softfloor1)
-    obstacles.add(map1softfloor1)
-    map1softfloor2 = Softfloor(300, 650, 550)
-    all_sprites_list.add(map1softfloor2)
-    floors.add(map1softfloor2)
-    obstacles.add(map1softfloor2)
-    map1softfloor3 = Softfloor(300, 350, 450)
-    all_sprites_list.add(map1softfloor3)
-    floors.add(map1softfloor3)
-    obstacles.add(map1softfloor3)
-    map1softfloor4 = Softfloor(300, 50, 350)
-    all_sprites_list.add(map1softfloor4)
-    floors.add(map1softfloor4)
-    obstacles.add(map1softfloor4)
-    map1softfloor5 = Softfloor(300, 650, 350)
-    all_sprites_list.add(map1softfloor5)
-    floors.add(map1softfloor5)
-    obstacles.add(map1softfloor5)
-
+    if map =="1":
+        map1softfloor1 = Softfloor(300, 50, 550)
+        all_sprites_list.add(map1softfloor1)
+        floors.add(map1softfloor1)
+        obstacles.add(map1softfloor1)
+        map1softfloor2 = Softfloor(300, 650, 550)
+        all_sprites_list.add(map1softfloor2)
+        floors.add(map1softfloor2)
+        obstacles.add(map1softfloor2)
+        map1softfloor3 = Softfloor(300, 350, 450)
+        all_sprites_list.add(map1softfloor3)
+        floors.add(map1softfloor3)
+        obstacles.add(map1softfloor3)
+        map1softfloor4 = Softfloor(300, 50, 350)
+        all_sprites_list.add(map1softfloor4)
+        floors.add(map1softfloor4)
+        obstacles.add(map1softfloor4)
+        map1softfloor5 = Softfloor(300, 650, 350)
+        all_sprites_list.add(map1softfloor5)
+        floors.add(map1softfloor5)
+        obstacles.add(map1softfloor5)
+    # elif map =="2":
+        # map 2 code
+    # elif map =="3":
+        # map 3 code
 
 # This function draws the Players stats at the top of the screen
 def drawstats():
@@ -783,7 +791,7 @@ while not done:
 
                 drawstats()
                 player1.update(timer)
-                screen.blit(background_image, (0, 0))
+                screen.blit(background_image1, (0, 0))
 
                 pygame.draw.rect(screen, BLACK, [400, 0, 200, 150])
                 player1lives = statfont.render("Lives: ", True, WHITE)
@@ -876,8 +884,7 @@ while not done:
                     all_sprites_list.add(player1)
                     all_sprites_list.add(player2)
 
-                    if Map == "1":
-                        map1create()
+                    mapcreate(Map)
 
 
                 if event.type == pygame.KEYDOWN:
@@ -1097,10 +1104,12 @@ while not done:
                     spawn4 = Pickups(790, 325, gunnum)
                     all_sprites_list.add(spawn4)
                     pickups_sprite_list.add(spawn4)
-
-                screen.blit(background_image, (0, 0))
-
-
+                if map == "1":
+                    screen.blit(background_image1, (0, 0))
+                if map == "2":
+                    screen.blit(background_image2, (0, 0))
+                if map == "3":
+                    screen.blit(background_image3, (0,0))
 
                 timer = timer + 1
                 if timer % 60 == 0:
