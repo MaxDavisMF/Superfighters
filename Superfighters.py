@@ -28,7 +28,7 @@ background_image3 = pygame.image.load("Spacebackground.png").convert()
 background_image3 = pygame.transform.scale(background_image3, (1000, 750))
 
 Ladderimage = pygame.image.load("Laddersprite.png").convert()
-Ladderimage = pygame.transform.scale(Menu_image, (30, 75))
+Ladderimage = pygame.transform.scale(Ladderimage, (40, 100))
 
 player_still_image_right = pygame.image.load("standright_1.png")
 player_still_image_right = pygame.transform.scale(player_still_image_right, (37, 63))
@@ -418,24 +418,70 @@ def mapcreate(map):
         all_sprites_list.add(map1softfloor1)
         floors.add(map1softfloor1)
         obstacles.add(map1softfloor1)
+
         map1softfloor2 = Softfloor(300, 650, 550)
         all_sprites_list.add(map1softfloor2)
         floors.add(map1softfloor2)
         obstacles.add(map1softfloor2)
+
         map1softfloor3 = Softfloor(300, 350, 450)
         all_sprites_list.add(map1softfloor3)
         floors.add(map1softfloor3)
         obstacles.add(map1softfloor3)
+
         map1softfloor4 = Softfloor(300, 50, 350)
         all_sprites_list.add(map1softfloor4)
         floors.add(map1softfloor4)
         obstacles.add(map1softfloor4)
+
         map1softfloor5 = Softfloor(300, 650, 350)
         all_sprites_list.add(map1softfloor5)
         floors.add(map1softfloor5)
         obstacles.add(map1softfloor5)
-    # elif map =="2":
-        # map 2 code
+
+    elif map =="2":
+        map2hardwall1 = Hardfloor(50, 700, 0, 150)
+        all_sprites_list.add(map2hardwall1)
+        floors.add(map2hardwall1)
+        obstacles.add(map2hardwall1)
+
+        map2hardwall2 = Hardfloor(50, 700, 950, 150)
+        all_sprites_list.add(map2hardwall2)
+        floors.add(map2hardwall2)
+        obstacles.add(map2hardwall2)
+
+        map2softfloor1 = Softfloor(200, 50, 450)
+        all_sprites_list.add(map2softfloor1)
+        floors.add(map2softfloor1)
+        obstacles.add(map2softfloor1)
+
+        map2softfloor2 = Softfloor(200, 50, 250)
+        all_sprites_list.add(map2softfloor2)
+        floors.add(map2softfloor2)
+        obstacles.add(map2softfloor2)
+
+        map2softfloor3 = Softfloor(200, 750, 250)
+        all_sprites_list.add(map2softfloor3)
+        floors.add(map2softfloor3)
+        obstacles.add(map2softfloor3)
+
+        map2softfloor4 = Softfloor(200, 400, 450)
+        all_sprites_list.add(map2softfloor4)
+        floors.add(map2softfloor4)
+        obstacles.add(map2softfloor4)
+
+        map2softfloor5 = Softfloor(50, 650, 350)
+        all_sprites_list.add(map2softfloor5)
+        floors.add(map2softfloor5)
+        obstacles.add(map2softfloor5)
+
+        map2ladder1 = Ladder(150, 550)
+        all_sprites_list.add(map2ladder1)
+        ladders.add(map2ladder1)
+
+        map2ladder2 = Ladder(150, 450)
+        all_sprites_list.add(map2ladder2)
+        ladders.add(map2ladder2)
     # elif map =="3":
         # map 3 code
 
@@ -443,7 +489,7 @@ def mapcreate(map):
 def drawstats():
     if Multiplayer and not Gameover:
         pygame.draw.rect(screen, BLACK, [300, 0, 400, 150])
-        player1title = statfont.render("Player 1:", True, WHITE)
+        player1title = statfont.render("Player 1", True, WHITE)
         screen.blit(player1title, [310, 10])
         player1health = statfont.render(str(player1.health), True, WHITE)
         screen.blit(player1health, [310, 45])
@@ -452,7 +498,7 @@ def drawstats():
         player1ammo = statfont.render(str(player1.ammo), True, WHITE)
         screen.blit(player1ammo, [310, 115])
 
-        player2title = statfont.render("Player 2:", True, WHITE)
+        player2title = statfont.render("Player 2", True, WHITE)
         screen.blit(player2title, [510, 10])
         player2health = statfont.render(str(player2.health), True, WHITE)
         screen.blit(player2health, [510, 45])
@@ -476,7 +522,7 @@ def drawwinner(winner):
             Winnertext = font.render("Player 1 Wins!", True, WHITE)
             screen.blit(Winnertext, [370, 150])
         elif winner == "Player 2":
-            Winnertext = font.render("Plare 2 Wins!", True, WHITE)
+            Winnertext = font.render("Player 2 Wins!", True, WHITE)
             screen.blit(Winnertext, [370, 150])
         nexttext = font.render("Press Space to return to menu", True, WHITE)
         screen.blit(nexttext, [250, 500])
@@ -484,7 +530,7 @@ def drawwinner(winner):
 #This function draws the results after a singleplayer level
 def drawresult(result):
     if result == False:
-        Resulttext = font.render("You Loose!", True, WHITE)
+        Resulttext = font.render("You Lose!", True, WHITE)
         screen.blit(Resulttext, [400, 200])
     if result == True:
         Resulttext = font.render("Level Complete!", True, WHITE)
@@ -501,6 +547,7 @@ bullet_sprite_list = pygame.sprite.Group()
 obstacles = pygame.sprite.Group()
 pickups_sprite_list = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
+ladders = pygame.sprite.Group()
 # Adding Objects to sprite lists
 # all_sprites_list.add(player1)
 # variables
