@@ -886,7 +886,6 @@ while not done:
 
                     mapcreate(Map)
 
-
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT and player1.crouched == False:
                         player1.speedx = -5
@@ -1104,11 +1103,12 @@ while not done:
                     spawn4 = Pickups(790, 325, gunnum)
                     all_sprites_list.add(spawn4)
                     pickups_sprite_list.add(spawn4)
-                if map == "1":
+
+                if Map == "1":
                     screen.blit(background_image1, (0, 0))
-                if map == "2":
+                if Map == "2":
                     screen.blit(background_image2, (0, 0))
-                if map == "3":
+                if Map == "3":
                     screen.blit(background_image3, (0,0))
 
                 timer = timer + 1
