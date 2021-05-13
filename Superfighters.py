@@ -27,6 +27,8 @@ background_image2 = pygame.transform.scale(background_image2, (1000, 750))
 background_image3 = pygame.image.load("Spacebackground.png").convert()
 background_image3 = pygame.transform.scale(background_image3, (1000, 750))
 
+Ladderimage = pygame.image.load("Laddersprite.png").convert()
+Ladderimage = pygame.transform.scale(Menu_image, (30, 75))
 
 player_still_image_right = pygame.image.load("standright_1.png")
 player_still_image_right = pygame.transform.scale(player_still_image_right, (37, 63))
@@ -394,6 +396,15 @@ class Titleimage(pygame.sprite.Sprite):
         self.image.set_colorkey(BLACK)
         self.rect.x = 150
         self.rect.y = 25
+
+class Ladder(pygame.sprite.Sprite):
+    def __init__(self, xcoord, ycoord):
+        super().__init__()
+        self.image = Ladderimage
+        self.rect = self.image.get_rect()
+        self.image.set_colorkey(BLACK)
+        self.rect.x = xcoord
+        self.rect.y = ycoord
 
 # These funtions will create the maps
 # Map1:
