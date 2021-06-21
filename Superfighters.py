@@ -482,6 +482,23 @@ def mapcreate(map):
         map2ladder2 = Ladder(150, 450)
         all_sprites_list.add(map2ladder2)
         ladders.add(map2ladder2)
+
+        map2ladder3 = Ladder(80, 350)
+        all_sprites_list.add(map2ladder3)
+        ladders.add(map2ladder3)
+
+        map2ladder4 = Ladder(80, 250)
+        all_sprites_list.add(map2ladder4)
+        ladders.add(map2ladder4)
+
+        map2ladder5 = Ladder(450, 450)
+        all_sprites_list.add(map2ladder5)
+        ladders.add(map2ladder5)
+
+        map2ladder6 = Ladder(450, 550)
+        all_sprites_list.add(map2ladder6)
+        ladders.add(map2ladder6)
+
     # elif map =="3":
         # map 3 code
 
