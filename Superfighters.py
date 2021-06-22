@@ -102,6 +102,9 @@ player_magnum_right_red = pygame.transform.scale(player_magnum_right_red, (50, 6
 player_magnum_left_red = pygame.image.load("magnumaimleftred.png")
 player_magnum_left_red = pygame.transform.scale(player_magnum_left_red,  (50, 63))
 
+player_ladder_climb = pygame.image.laod("climbladder.png")
+player_ladder_climb = pygame.transform.scale(player_ladder_climb, (50,63))
+
 magnum = pygame.image.load("magnum.png")
 magnum = pygame.transform.scale(magnum, (30, 18))
 pistol = pygame.image.load("pistol.png")
