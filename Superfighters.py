@@ -102,7 +102,7 @@ player_magnum_right_red = pygame.transform.scale(player_magnum_right_red, (50, 6
 player_magnum_left_red = pygame.image.load("magnumaimleftred.png")
 player_magnum_left_red = pygame.transform.scale(player_magnum_left_red,  (50, 63))
 
-player_ladder_climb = pygame.image.laod("climbladder.png")
+player_ladder_climb = pygame.image.load("climbladder.png")
 player_ladder_climb = pygame.transform.scale(player_ladder_climb, (50,63))
 
 magnum = pygame.image.load("magnum.png")
@@ -323,6 +323,9 @@ class Player(pygame.sprite.Sprite):
             if self.supported == False:
                 self.speedy += self.accy
                 self.rect.y += self.speedy
+            # If climbing
+            if self.state == "climbing":
+                self.image = player_ladder_climb
             # Check if floor has been hit
             player_floor_collision_list = pygame.sprite.spritecollide(self, floors, False)
             # If it has and player was falling, stop falling and place player on top of floor
@@ -975,9 +978,15 @@ while not done:
                         player1.state = "walk"
                         player1.direction = "right"
                     elif event.key == pygame.K_UP and player1.supported == True:
-                        player1.speedy = -5.4
-                        player1.supported = False
-                        player1.state = "jump"
+                        player1_ladder_list = pygame.sprite.spritecollide(player1, ladders, False)
+                        if not player1_ladder_list:
+                            player1.speedy = -5.4
+                            player1.supported = False
+                            player1.state = "jump"
+                        elif player1_ladder_list:
+                            player1.state = "climb"
+                            player1.rect.y -= 3
+
                     elif event.key == pygame.K_DOWN and player1.supported == True and player1.shooting == False:
                         player1.state = "crouched"
                         player1.crouched = True
