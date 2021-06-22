@@ -954,12 +954,13 @@ while not done:
                     Setup = False
                     all_sprites_list.empty()
                     floors.empty()
+
+                    mapcreate(Map)
+
                     player1 = Player(900, 580)
                     player2 = Player(100, 580)
                     all_sprites_list.add(player1)
                     all_sprites_list.add(player2)
-
-                    mapcreate(Map)
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT and player1.crouched == False:
@@ -1094,7 +1095,7 @@ while not done:
                             player2.rect.y -= 18
                             # So that the player is not shifted up again if the player lets go of the down key
                             player2.uncrouching = False
-                            #To readjust the sprite when the player stops shooting.
+                            #To readjust the sprite when the player stops shooting.21
                             player2.crouching = True
                     elif event.key == pygame.K_q:
                         pickup_player_contact = pygame.sprite.spritecollide(player2, pickups_sprite_list, False)
