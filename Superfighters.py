@@ -103,7 +103,7 @@ player_magnum_left_red = pygame.image.load("magnumaimleftred.png")
 player_magnum_left_red = pygame.transform.scale(player_magnum_left_red,  (50, 63))
 
 player_ladder_climb = pygame.image.load("climbladder.png")
-player_ladder_climb = pygame.transform.scale(player_ladder_climb, (50,63))
+player_ladder_climb = pygame.transform.scale(player_ladder_climb, (35,63))
 
 magnum = pygame.image.load("magnum.png")
 magnum = pygame.transform.scale(magnum, (30, 18))
@@ -206,6 +206,8 @@ class Enemy(pygame.sprite.Sprite):
                     self.jumping = False
                     # + 63 to adjust for player height
                     self.rect.y = (floor.rect.y - 63)
+        if self.state == "climb":
+            self.supported = True
 
         if self.jumping == False:
             if self.timer % 10 == 0:
@@ -324,7 +326,7 @@ class Player(pygame.sprite.Sprite):
                 self.speedy += self.accy
                 self.rect.y += self.speedy
             # If climbing
-            if self.state == "climbing":
+            if self.state == "climb":
                 self.image = player_ladder_climb
             # Check if floor has been hit
             player_floor_collision_list = pygame.sprite.spritecollide(self, floors, False)
