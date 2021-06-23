@@ -576,6 +576,48 @@ def drawresult(result):
     resettext = font.render("Press Space to return to the main menu", True, WHITE)
     screen.blit(resettext, [175, 280])
 
+def spawnpickups(map):
+    for item in pickups_sprite_list:
+        item.kill()
+    if map == "1":
+        gunnum = random.randrange(0, 2)
+        spawn1 = Pickups(490, 625, gunnum)
+        all_sprites_list.add(spawn1)
+        pickups_sprite_list.add(spawn1)
+        gunnum = random.randrange(0, 2)
+        spawn2 = Pickups(490, 425, gunnum)
+        all_sprites_list.add(spawn2)
+        pickups_sprite_list.add(spawn2)
+        gunnum = random.randrange(0, 2)
+        spawn3 = Pickups(190, 325, gunnum)
+        all_sprites_list.add(spawn3)
+        pickups_sprite_list.add(spawn3)
+        gunnum = random.randrange(0, 2)
+        spawn4 = Pickups(790, 325, gunnum)
+        all_sprites_list.add(spawn4)
+        pickups_sprite_list.add(spawn4)
+
+    if map == "2":
+        gunnum = random.randrange(0, 2)
+        spawn1 = Pickups(150, 225, gunnum)
+        all_sprites_list.add(spawn1)
+        pickups_sprite_list.add(spawn1)
+        gunnum = random.randrange(0, 2)
+        spawn2 = Pickups(850, 225, gunnum)
+        all_sprites_list.add(spawn2)
+        pickups_sprite_list.add(spawn2)
+        gunnum = random.randrange(0, 2)
+        spawn3 = Pickups(665, 325, gunnum)
+        all_sprites_list.add(spawn3)
+        pickups_sprite_list.add(spawn3)
+        gunnum = random.randrange(0, 2)
+        spawn4 = Pickups(160, 425, gunnum)
+        all_sprites_list.add(spawn4)
+        pickups_sprite_list.add(spawn4)
+        gunnum = random.randrange(0, 2)
+        spawn5 = Pickups(490, 625, gunnum)
+        all_sprites_list.add(spawn5)
+        pickups_sprite_list.add(spawn5)
 
 # Instantiate Objects
 titlepic = Titleimage()
@@ -1205,24 +1247,7 @@ while not done:
                     bullet.update()
 
                 if pickup_timer == 599:
-                    for item in pickups_sprite_list:
-                        item.kill()
-                    gunnum = random.randrange(0, 2)
-                    spawn1 = Pickups(490, 625, gunnum)
-                    all_sprites_list.add(spawn1)
-                    pickups_sprite_list.add(spawn1)
-                    gunnum = random.randrange(0, 2)
-                    spawn2 = Pickups(490, 425, gunnum)
-                    all_sprites_list.add(spawn2)
-                    pickups_sprite_list.add(spawn2)
-                    gunnum = random.randrange(0, 2)
-                    spawn3 = Pickups(190, 325, gunnum)
-                    all_sprites_list.add(spawn3)
-                    pickups_sprite_list.add(spawn3)
-                    gunnum = random.randrange(0, 2)
-                    spawn4 = Pickups(790, 325, gunnum)
-                    all_sprites_list.add(spawn4)
-                    pickups_sprite_list.add(spawn4)
+                    spawnpickups(Map)
 
                 if Map == "1":
                     screen.blit(background_image1, (0, 0))
