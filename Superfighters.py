@@ -206,8 +206,6 @@ class Enemy(pygame.sprite.Sprite):
                     self.jumping = False
                     # + 63 to adjust for player height
                     self.rect.y = (floor.rect.y - 63)
-        if self.state == "climb":
-            self.supported = True
 
         if self.jumping == False:
             if self.timer % 10 == 0:
@@ -351,6 +349,11 @@ class Player(pygame.sprite.Sprite):
                         self.supported = True
                         # + 63 to adjust for player height
                         self.rect.y = (floor.rect.y - 63)
+
+            # Set self.supported to true so that the player moves up the ladder instead of instantly falling back down
+            if self.state == "climb":
+                self.supported = True
+
         # Stop the player shooting in mid air
 
         elif self.shooting == True:
