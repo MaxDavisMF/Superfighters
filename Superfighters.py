@@ -1104,9 +1104,15 @@ while not done:
                         player2.state = "walk"
                         player2.direction = "right"
                     elif event.key == pygame.K_w and player2.supported == True:
-                        player2.speedy = -5.4
-                        player2.supported = False
-                        player2.state = "jump"
+                        player2_ladder_list = pygame.sprite.spritecollide(player2, ladders, False)
+                        if not player2_ladder_list:
+                            player2.speedy = -5.4
+                            player2.supported = False
+                            player2.state = "jump"
+                        elif player2_ladder_list:
+                            player2.state = "climb"
+                            player2.rect.y -= 3
+                            player2.climbing = True
                     elif event.key == pygame.K_s and player2.supported == True and player2.shooting == False:
                         player2.state = "crouched"
                         player2.crouched = True
@@ -1153,6 +1159,13 @@ while not done:
                         player2.crouching = True
                         player2.crouched = False
                         player2.wascrouched = False
+                    elif event.key == pygame.K_w:
+                        player2_ladder_list = pygame.sprite.spritecollide(player2, ladders, False)
+                        if player2.climbing == True and not player2_ladder_list:
+                            player2.state = "walk"
+                            player2.supported = False
+                            player2.climbing = False
+
                     elif event.key == pygame.K_2:
                         if player2.aiming == True and player2.ammo > 0:
                             player2.ammo -= 1
