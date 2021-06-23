@@ -403,6 +403,7 @@ class Softfloor(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = xcoord
         self.rect.y = ycoord
+        self.moving = False
 
 
 class Titleimage(pygame.sprite.Sprite):
@@ -518,8 +519,35 @@ def mapcreate(map):
         all_sprites_list.add(map2ladder6)
         ladders.add(map2ladder6)
 
-    # elif map =="3":
-    # map 3 code
+    elif map == "3":
+        map3softfloor1 = Softfloor(100, 150, 150)
+        all_sprites_list.add(map3softfloor1)
+        floors.add(map3softfloor1)
+        obstacles.add(map3softfloor1)
+        map3softfloor1.moving = True
+
+        map3softfloor2 = Softfloor(100, 850, 550)
+        all_sprites_list.add(map3softfloor2)
+        floors.add(map3softfloor2)
+        obstacles.add(map3softfloor2)
+        map3softfloor2.moving = True
+
+        map3softfloor3 = Softfloor(200, 400, 400)
+        all_sprites_list.add(map3softfloor3)
+        floors.add(map3softfloor3)
+        obstacles.add(map3softfloor3)
+
+        map3softfloor4 = Softfloor(100, 300, 550)
+        all_sprites_list.add(map3softfloor4)
+        floors.add(map3softfloor4)
+        obstacles.add(map3softfloor4)
+        map3softfloor4.moving = True
+
+        map3softfloor5 = Softfloor(100, 700, 250)
+        all_sprites_list.add(map3softfloor5)
+        floors.add(map3softfloor5)
+        obstacles.add(map3softfloor5)
+        map3softfloor5.moving = True
 
 
 # This function draws the Players stats at the top of the screen
