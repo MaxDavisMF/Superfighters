@@ -554,12 +554,14 @@ def mapcreate(map):
         map3softfloor1 = Movingsoftfloor(100, 150, 150, "y", 150, 550, "down")
         all_sprites_list.add(map3softfloor1)
         floors.add(map3softfloor1)
+        movingfloors.add(map3softfloor1)
         obstacles.add(map3softfloor1)
         map3softfloor1.moving = True
 
         map3softfloor2 = Movingsoftfloor(100, 850, 550, "y", 150, 550, "up")
         all_sprites_list.add(map3softfloor2)
         floors.add(map3softfloor2)
+        movingfloors.add(map3softfloor2)
         obstacles.add(map3softfloor2)
         map3softfloor2.moving = True
 
@@ -673,6 +675,7 @@ map1floor = Hardfloor(1000, 100, 0, 650)
 # Set up sprite lists
 all_sprites_list = pygame.sprite.Group()
 floors = pygame.sprite.Group()
+movingfloors = pygame.sprite.Group()
 bullet_sprite_list = pygame.sprite.Group()
 obstacles = pygame.sprite.Group()
 pickups_sprite_list = pygame.sprite.Group()
@@ -1303,7 +1306,11 @@ while not done:
                     screen.blit(background_image2, (0, 0))
                 if Map == "3":
                     screen.blit(background_image3, (0, 0))
+                    for item in movingfloors:
+                        item.update()
 
+                        
+                # Timers
                 timer = timer + 1
                 if timer % 60 == 0:
                     timer = 0
@@ -1315,6 +1322,7 @@ while not done:
                 if pickup_timer % 600 == 0:
                     pickup_timer = 0
 
+                # To check if either character is dead
                 if player1.health <= 0:
                     winner = "Player 2"
                     for sprite in all_sprites_list:
