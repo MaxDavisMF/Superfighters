@@ -405,7 +405,7 @@ class Softfloor(pygame.sprite.Sprite):
         self.rect.y = ycoord
 
 class Movingsoftfloor(pygame.sprite.Sprite):
-    def __init__(self, xsize, xcoord, ycoord, direction, parameter1, parameter2):
+    def __init__(self, xsize, xcoord, ycoord, direction, parameter1, parameter2, startdirection):
         super().__init__()
         self.image = pygame.Surface((xsize, 5))
         self.image.fill(PLATFORM)
@@ -414,9 +414,28 @@ class Movingsoftfloor(pygame.sprite.Sprite):
         self.rect.y = ycoord
         self.moving = False
         self.direction = direction
-        # These parameters are the coords that the platform will move between
+        # These parameters are the coords that the platform will move between. The following code ensures that parameter 1 is the larger coord
+        if parameter1 < parameter2:
+            Temp = parameter1
+            parameter1 = parameter2
+            parameter2 = Temp
         self.parameter1 = parameter1
         self.parameter2 = parameter2
+        self.currentdirection = startdirection
+
+    def update(self):
+        if self.direction == "y":
+            if self.currentdirection == "up":
+                if self.rect.y > self.parameter2:
+                       self.rect.y -= 2
+                else:
+                       self.currentdirection = "down"
+            if self.currentdirection == "down":
+                if self.rect.y < self.parameter1:
+                    self.rect.y += 2
+                else:
+                       self.currentdirection = "up"
+
 
 class Titleimage(pygame.sprite.Sprite):
     def __init__(self):
@@ -532,13 +551,13 @@ def mapcreate(map):
         ladders.add(map2ladder6)
 
     elif map == "3":
-        map3softfloor1 = Movingsoftfloor(100, 150, 150, "y", 150, 550)
+        map3softfloor1 = Movingsoftfloor(100, 150, 150, "y", 150, 550, "down")
         all_sprites_list.add(map3softfloor1)
         floors.add(map3softfloor1)
         obstacles.add(map3softfloor1)
         map3softfloor1.moving = True
 
-        map3softfloor2 = Movingsoftfloor(100, 850, 550, "y", 150, 550)
+        map3softfloor2 = Movingsoftfloor(100, 850, 550, "y", 150, 550, "up")
         all_sprites_list.add(map3softfloor2)
         floors.add(map3softfloor2)
         obstacles.add(map3softfloor2)
