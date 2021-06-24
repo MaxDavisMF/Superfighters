@@ -403,8 +403,20 @@ class Softfloor(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = xcoord
         self.rect.y = ycoord
-        self.moving = False
 
+class Movingsoftfloor(pygame.sprite.Sprite):
+    def __init__(self, xsize, xcoord, ycoord, direction, parameter1, parameter2):
+        super().__init__()
+        self.image = pygame.Surface((xsize, 5))
+        self.image.fill(PLATFORM)
+        self.rect = self.image.get_rect()
+        self.rect.x = xcoord
+        self.rect.y = ycoord
+        self.moving = False
+        self.direction = direction
+        # These parameters are the coords that the platform will move between
+        self.parameter1 = parameter1
+        self.parameter2 = parameter2
 
 class Titleimage(pygame.sprite.Sprite):
     def __init__(self):
@@ -520,13 +532,13 @@ def mapcreate(map):
         ladders.add(map2ladder6)
 
     elif map == "3":
-        map3softfloor1 = Softfloor(100, 150, 150)
+        map3softfloor1 = Movingsoftfloor(100, 150, 150, "y", 150, 550)
         all_sprites_list.add(map3softfloor1)
         floors.add(map3softfloor1)
         obstacles.add(map3softfloor1)
         map3softfloor1.moving = True
 
-        map3softfloor2 = Softfloor(100, 850, 550)
+        map3softfloor2 = Movingsoftfloor(100, 850, 550, "y", 150, 550)
         all_sprites_list.add(map3softfloor2)
         floors.add(map3softfloor2)
         obstacles.add(map3softfloor2)
@@ -537,17 +549,6 @@ def mapcreate(map):
         floors.add(map3softfloor3)
         obstacles.add(map3softfloor3)
 
-        map3softfloor4 = Softfloor(100, 300, 550)
-        all_sprites_list.add(map3softfloor4)
-        floors.add(map3softfloor4)
-        obstacles.add(map3softfloor4)
-        map3softfloor4.moving = True
-
-        map3softfloor5 = Softfloor(100, 700, 250)
-        all_sprites_list.add(map3softfloor5)
-        floors.add(map3softfloor5)
-        obstacles.add(map3softfloor5)
-        map3softfloor5.moving = True
 
 
 # This function draws the Players stats at the top of the screen
