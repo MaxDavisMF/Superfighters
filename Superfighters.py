@@ -289,6 +289,7 @@ class Player(pygame.sprite.Sprite):
         self.dropping = False
         self.lives = 3
         self.climbing = False
+        self.movingplatform = None
 
     def update(self, timer):
         if self.shooting == False:
@@ -551,14 +552,14 @@ def mapcreate(map):
         ladders.add(map2ladder6)
 
     elif map == "3":
-        map3softfloor1 = Movingsoftfloor(100, 150, 150, "y", 150, 550, "down")
+        map3softfloor1 = Movingsoftfloor(100, 150, 150, "y", 150, 600, "down")
         all_sprites_list.add(map3softfloor1)
         floors.add(map3softfloor1)
         movingfloors.add(map3softfloor1)
         obstacles.add(map3softfloor1)
         map3softfloor1.moving = True
 
-        map3softfloor2 = Movingsoftfloor(100, 850, 550, "y", 150, 550, "up")
+        map3softfloor2 = Movingsoftfloor(100, 850, 550, "y", 150, 600, "up")
         all_sprites_list.add(map3softfloor2)
         floors.add(map3softfloor2)
         movingfloors.add(map3softfloor2)
@@ -574,7 +575,6 @@ def mapcreate(map):
 
 # This function draws the Players stats at the top of the screen
 def drawstats():
-    if Multiplayer and not Gameover:
         pygame.draw.rect(screen, BLACK, [300, 0, 400, 150])
         player1title = statfont.render("Player 1", True, WHITE)
         screen.blit(player1title, [310, 10])
@@ -584,7 +584,6 @@ def drawstats():
         screen.blit(player1gun, [310, 80])
         player1ammo = statfont.render(str(player1.ammo), True, WHITE)
         screen.blit(player1ammo, [310, 115])
-
         player2title = statfont.render("Player 2", True, WHITE)
         screen.blit(player2title, [510, 10])
         player2health = statfont.render(str(player2.health), True, WHITE)
@@ -594,12 +593,15 @@ def drawstats():
         player2ammo = statfont.render(str(player2.ammo), True, WHITE)
         screen.blit(player2ammo, [510, 115])
 
-    if Singleplayer:
-        pygame.draw.rect(screen, BLACK, [400, 0, 200, 150])
-        player1lives = statfont.render("Lives: " and str(player1.lives), True, WHITE)
-        screen.blit(player1lives, [410, 25])
-        player1ammo = statfont.render("Ammo: " and str(player1.ammo), True, WHITE)
-        screen.blit(player1ammo, [410, 55])
+def drawstatsSP():
+    pygame.draw.rect(screen, BLACK, [400, 0, 200, 75])
+    player1lives = statfont.render("Lives: ", True, WHITE)
+    player1lives2 = statfont.render(str(player1.lives), True, WHITE)
+    screen.blit(player1lives, [410, 25])
+    screen.blit(player1lives2, [470, 25])
+
+
+
 
 
 # This function displays the winner after a game
@@ -976,33 +978,25 @@ while not done:
                 for sprite in floors:
                     if sprite.rect.x < -300:
                         sprite.kill()
-
-                drawstats()
-                player1.update(timer)
                 screen.blit(background_image1, (0, 0))
-
-                pygame.draw.rect(screen, BLACK, [400, 0, 200, 150])
-                player1lives = statfont.render("Lives: ", True, WHITE)
-                player1lives2 = statfont.render(str(player1.lives), True, WHITE)
-                screen.blit(player1lives, [410, 25])
-                screen.blit(player1lives2, [470, 25])
-                player1ammo = statfont.render("Ammo: ", True, WHITE)
-                player1ammo2 = statfont.render(str(player1.ammo), True, WHITE)
-                screen.blit(player1ammo, [410, 55])
-                screen.blit(player1ammo2, [470, 55])
+                drawstatsSP()
+                player1.update(timer)
 
                 Enemy_spawn_timer += 1
 
                 if player1.lives == 0:
                     Gameover = True
+                    if Leveltimer > 2000:
+                        Result = True
+                    elif Leveltimer < 2000:
+                        Result = False
+                    for sprite in all_sprites_list:
+                        sprite.kill()
                 Leveltimer += 1
 
                 score += 1
         if Gameover:
-            if Leveltimer > 2000:
-                Result = True
-            elif Leveltimer < 2000:
-                Result = False
+
             if Level == "1":
                 if score > int(L1topscore):
                     L1 = open("L1highscore.txt", "w")
@@ -1025,8 +1019,7 @@ while not done:
                     L3topscore = str(score)
                     score = 0
 
-            for sprite in all_sprites_list:
-                sprite.kill()
+
             screen.fill(BLACK)
             drawresult(Result)
             if event.type == pygame.KEYDOWN:
@@ -1069,7 +1062,7 @@ while not done:
                     mapcreate(Map)
 
                     player1 = Player(900, 580)
-                    player2 = Player(100, 580)
+                    player2 = Player(100, 0)
                     all_sprites_list.add(player1)
                     all_sprites_list.add(player2)
 
@@ -1353,3 +1346,15 @@ while not done:
 
 # Close the window and quit.
 pygame.quit()
+
+
+def drawwinner(winner):
+    if Multiplayer and Gameover:
+        if winner == "Player 1":
+            Winnertext = font.render("Player 1 Wins!", True, WHITE)
+            screen.blit(Winnertext, [370, 150])
+        elif winner == "Player 2":
+            Winnertext = font.render("Plare 2 Wins!", True, WHITE)
+            screen.blit(Winnertext, [370, 150])
+        nexttext = font.render("Press Space to return to menu", True, WHITE)
+        screen.blit(nexttext, [250, 500])
