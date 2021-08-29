@@ -1151,13 +1151,13 @@ while not done:
                                 bullet.direction = "right"
                                 all_sprites_list.add(bullet)
                                 bullet_sprite_list.add(bullet)
-                                bullet.gun = rifle
                             elif player1.direction == "left":
                                 bullet = Bullet(player1.rect.x - 12, player1.rect.y + 9, spread, Ydirection)
                                 bullet.direction = "left"
                                 all_sprites_list.add(bullet)
                                 bullet_sprite_list.add(bullet)
-                                bullet.gun = rifle
+                            bullet.gun = "rifle"
+
 
 
                         rifleshoot += 1
