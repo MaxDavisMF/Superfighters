@@ -258,8 +258,9 @@ class Pickups(pygame.sprite.Sprite):
         elif gunnum == 1:
             self.image = magnum
             self.type = "magnum"
-        elif gunnum ==2:
+        elif gunnum == 2:
             self.image = rifle
+            self.type = "rifle"
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = xpos
@@ -1139,6 +1140,8 @@ while not done:
                                 player1.ammo = 5
                             elif gun.type == "pistol":
                                 player1.ammo = 12
+                            elif gun.type == "rifle":
+                                player1.ammo = 30
                             gun.kill()
 
                 if event.type == pygame.KEYUP:
@@ -1244,6 +1247,9 @@ while not done:
                                 player2.ammo = 5
                             elif gun.type == "pistol":
                                 player2.ammo = 12
+                            elif gun.type == "rifle":
+                                player2.ammo = 30
+
                             gun.kill()
 
                 if event.type == pygame.KEYUP:
