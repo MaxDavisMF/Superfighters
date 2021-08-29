@@ -400,6 +400,8 @@ class Player(pygame.sprite.Sprite):
                     self.health -= 9
                 elif bullet.gun == "magnum":
                     self.health -= 20
+                elif bullet.gun == "rifle":
+                    self.health -= 5
                 bullet.kill()
 
 
@@ -1132,6 +1134,28 @@ while not done:
                             player1.uncrouching = False
                             # To readjust the sprite when the player stops shooting.
                             player1.crouching = True
+                        if player1.gun == "rifle":
+                            player1.ammo -= 1
+                            x = random.randrange(0, 2)
+                            spread = random.randrange(2, 30)
+                            # Generate the amount of spread
+                            if x == 1:
+                                Ydirection = True
+                            else:
+                                Ydirection = False
+                            if player1.direction == "right":
+                                # Coords adjusted a bit so that the bullet dies not collide with the player and dissapear straight away once created
+                                bullet = Bullet((player1.rect.x + 55), (player1.rect.y + 9), spread, Ydirection)
+                                bullet.direction = "right"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            elif player1.direction == "left":
+                                bullet = Bullet(player1.rect.x - 12, player1.rect.y + 9, spread, Ydirection)
+                                bullet.direction = "left"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            bullet.gun = rifle
+
                     elif event.key == pygame.K_k:
                         pickup_player_contact = pygame.sprite.spritecollide(player1, pickups_sprite_list, False)
                         for gun in pickup_player_contact:
