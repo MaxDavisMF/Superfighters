@@ -1,4 +1,3 @@
-
 # Import Libraries
 import pygame
 import random
@@ -104,6 +103,12 @@ player_magnum_right_red = pygame.transform.scale(player_magnum_right_red, (50, 6
 player_magnum_left_red = pygame.image.load("magnumaimleftred.png")
 player_magnum_left_red = pygame.transform.scale(player_magnum_left_red, (50, 63))
 
+player_rifle_right = pygame.image.load("rifleaimright.png")
+player_rifle_right = pygame.transform.scale(player_rifle_right, (50, 63))
+player_rifle_left = pygame.image.load("rifleaimleft.png")
+player_rifle_left = pygame.transform.scale(player_rifle_left, (50, 63))
+
+
 player_ladder_climb = pygame.image.load("climbladder.png")
 player_ladder_climb = pygame.transform.scale(player_ladder_climb, (35, 63))
 
@@ -111,6 +116,9 @@ magnum = pygame.image.load("magnum.png")
 magnum = pygame.transform.scale(magnum, (30, 18))
 pistol = pygame.image.load("pistol.png")
 pistol = pygame.transform.scale(pistol, (20, 18))
+rifle = pygame.image.load("rifle.png")
+rifle = pygame.transform.scale(rifle, (45, 18))
+
 # Fonts
 font = pygame.font.Font(None, 50)
 statfont = pygame.font.Font(None, 25)
@@ -250,6 +258,8 @@ class Pickups(pygame.sprite.Sprite):
         elif gunnum == 1:
             self.image = magnum
             self.type = "magnum"
+        elif gunnum ==2:
+            self.image = rifle
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = xpos
@@ -375,6 +385,11 @@ class Player(pygame.sprite.Sprite):
                     self.image = player_magnum_right
                 elif self.direction == "left":
                     self.image = player_magnum_left
+            elif self.gun == "rifle":
+                if self.direction == "right":
+                    self.image = player_rifle_right
+                elif self.direction == "left":
+                    self.image = player_rifle_left
         self.image.set_colorkey(BLACK)
 
         Player_hit_list = pygame.sprite.spritecollide(self, bullet_sprite_list, False)
@@ -633,41 +648,41 @@ def spawnpickups(map):
     for item in pickups_sprite_list:
         item.kill()
     if map == "1":
-        gunnum = random.randrange(0, 2)
+        gunnum = random.randrange(0, 3)
         spawn1 = Pickups(490, 625, gunnum)
         all_sprites_list.add(spawn1)
         pickups_sprite_list.add(spawn1)
-        gunnum = random.randrange(0, 2)
+        gunnum = random.randrange(0, 3)
         spawn2 = Pickups(490, 425, gunnum)
         all_sprites_list.add(spawn2)
         pickups_sprite_list.add(spawn2)
-        gunnum = random.randrange(0, 2)
+        gunnum = random.randrange(0, 3)
         spawn3 = Pickups(190, 325, gunnum)
         all_sprites_list.add(spawn3)
         pickups_sprite_list.add(spawn3)
-        gunnum = random.randrange(0, 2)
+        gunnum = random.randrange(0, 3)
         spawn4 = Pickups(790, 325, gunnum)
         all_sprites_list.add(spawn4)
         pickups_sprite_list.add(spawn4)
 
     if map == "2":
-        gunnum = random.randrange(0, 2)
+        gunnum = random.randrange(0, 3)
         spawn1 = Pickups(150, 225, gunnum)
         all_sprites_list.add(spawn1)
         pickups_sprite_list.add(spawn1)
-        gunnum = random.randrange(0, 2)
+        gunnum = random.randrange(0, 3)
         spawn2 = Pickups(850, 225, gunnum)
         all_sprites_list.add(spawn2)
         pickups_sprite_list.add(spawn2)
-        gunnum = random.randrange(0, 2)
+        gunnum = random.randrange(0, 3)
         spawn3 = Pickups(665, 325, gunnum)
         all_sprites_list.add(spawn3)
         pickups_sprite_list.add(spawn3)
-        gunnum = random.randrange(0, 2)
+        gunnum = random.randrange(0, 3)
         spawn4 = Pickups(160, 425, gunnum)
         all_sprites_list.add(spawn4)
         pickups_sprite_list.add(spawn4)
-        gunnum = random.randrange(0, 2)
+        gunnum = random.randrange(0, 3)
         spawn5 = Pickups(490, 625, gunnum)
         all_sprites_list.add(spawn5)
         pickups_sprite_list.add(spawn5)
