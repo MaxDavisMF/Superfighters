@@ -721,6 +721,7 @@ Enemy_spawn_timer = 0
 Leveltimer = 0
 score = 0
 Mapselect = True
+rifleshoot = 0
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
@@ -1134,7 +1135,8 @@ while not done:
                             player1.uncrouching = False
                             # To readjust the sprite when the player stops shooting.
                             player1.crouching = True
-                        if player1.gun == "rifle":
+
+                        if player1.gun == "rifle" and player1.ammo > 0 and rifleshoot == 0:
                             player1.ammo -= 1
                             x = random.randrange(0, 2)
                             spread = random.randrange(2, 30)
@@ -1149,12 +1151,18 @@ while not done:
                                 bullet.direction = "right"
                                 all_sprites_list.add(bullet)
                                 bullet_sprite_list.add(bullet)
+                                bullet.gun = rifle
                             elif player1.direction == "left":
                                 bullet = Bullet(player1.rect.x - 12, player1.rect.y + 9, spread, Ydirection)
                                 bullet.direction = "left"
                                 all_sprites_list.add(bullet)
                                 bullet_sprite_list.add(bullet)
-                            bullet.gun = rifle
+                                bullet.gun = rifle
+
+
+                        rifleshoot += 1
+                        if rifleshoot == 2:
+                            rifleshoot = 0
 
                     elif event.key == pygame.K_k:
                         pickup_player_contact = pygame.sprite.spritecollide(player1, pickups_sprite_list, False)
