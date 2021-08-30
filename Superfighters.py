@@ -270,6 +270,7 @@ class Pickups(pygame.sprite.Sprite):
         elif gunnum == 3:
             self.image = health
             self.type = "health"
+
         elif gunnum == 4:
             self.image = ammo
             self.type = "ammo"
@@ -416,6 +417,23 @@ class Player(pygame.sprite.Sprite):
                     self.health -= 5
                 bullet.kill()
 
+        Player_pickups = pygame.sprite.spritecollide(self, pickups_sprite_list, False)
+        if Player_pickups:
+            for pickup in Player_pickups:
+                if pickup.type == "health":
+                    pickup.kill()
+                    self.health += 50
+                    if self.health > 100:
+                        self.health = 100
+                    pickup.kill()
+                if pickup.type == "ammo":
+                    if self.gun == "pistol":
+                        self.ammo = 12
+                    if self.gun == "magnum":
+                        self.ammo = 5
+                    if self.gun == "rifle":
+                        self.ammo = 30
+                    pickup.kill()
 
 class Hardfloor(pygame.sprite.Sprite):
     def __init__(self, xsize, ysize, xcoord, ycoord):
@@ -956,7 +974,7 @@ while not done:
                         player1.crouched = False
                         player1.wascrouched = False
                     elif event.key == pygame.K_n:
-                        if player1.aiming == True and player1.ammo > 0:
+                        if player1.aiming and player1.ammo > 0:
                             player1.aiming = False
                             x = random.randrange(0, 2)
                             spread = random.randrange(2, 30)
@@ -1439,15 +1457,3 @@ while not done:
 
 # Close the window and quit.
 pygame.quit()
-
-
-def drawwinner(winner):
-    if Multiplayer and Gameover:
-        if winner == "Player 1":
-            Winnertext = font.render("Player 1 Wins!", True, WHITE)
-            screen.blit(Winnertext, [370, 150])
-        elif winner == "Player 2":
-            Winnertext = font.render("Plare 2 Wins!", True, WHITE)
-            screen.blit(Winnertext, [370, 150])
-        nexttext = font.render("Press Space to return to menu", True, WHITE)
-        screen.blit(nexttext, [250, 500])
