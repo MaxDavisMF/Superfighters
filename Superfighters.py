@@ -123,7 +123,7 @@ rifle = pygame.transform.scale(rifle, (45, 18))
 health = pygame.image.load("healthpowerup.png")
 health = pygame.transform.scale(health, (35, 20))
 ammo = pygame.image.load("ammopowerup.png")
-ammo = pygame.transform.scale(ammo, (20, 30))
+ammo = pygame.transform.scale(ammo, (25, 25))
 
 # Fonts
 font = pygame.font.Font(None, 50)
@@ -719,6 +719,11 @@ def spawnpickups(map):
         spawn5 = Pickups(490, 625, gunnum)
         all_sprites_list.add(spawn5)
         pickups_sprite_list.add(spawn5)
+    if map == "3":
+        gunnum = random.randrange(0, 5)
+        spawn1 = Pickups(490, 375, gunnum)
+        all_sprites_list.add(spawn1)
+        pickups_sprite_list.add(spawn1)
 
 # Instantiate Objects
 titlepic = Titleimage()
