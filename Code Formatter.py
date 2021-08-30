@@ -843,3 +843,40 @@ while not done:
     pygame.display.flip()
 # Close the window and quit.
 pygame.quit()
+
+
+elif event.key == pygame.K_n and player1.supported == True:
+                        player1.aiming = True
+                        player1.shooting = True
+                        # This is to adjust the coordinates of the player sprite so that he stands correctly
+                        if player1.crouched == True:
+                            player1.crouched = False
+                            # Remember that the player was crocuhed
+                            player1.wascrouched = True
+                            # Adjust coords of player
+                            player1.rect.y -= 18
+                            # So that the player is not shifted up again if the player lets go of the down key
+                            player1.uncrouching = False
+                            # To readjust the sprite when the player stops shooting.
+                            player1.crouching = True
+                        if player1.gun == "rifle":
+                            player1.ammo -= 1
+                            x = random.randrange(0, 2)
+                            spread = random.randrange(2, 30)
+                            # Generate the amount of spread
+                            if x == 1:
+                                Ydirection = True
+                            else:
+                                Ydirection = False
+                            if player1.direction == "right":
+                                # Coords adjusted a bit so that the bullet dies not collide with the player and dissapear straight away once created
+                                bullet = Bullet((player1.rect.x + 55), (player1.rect.y + 9), spread, Ydirection)
+                                bullet.direction = "right"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            elif player1.direction == "left":
+                                bullet = Bullet(player1.rect.x - 12, player1.rect.y + 9, spread, Ydirection)
+                                bullet.direction = "left"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            bullet.gun = rifle

@@ -1,3 +1,5 @@
+# Current glitch where stats still appear on gameover screen in multiplayer
+
 # Import Libraries
 import pygame
 import random
@@ -118,6 +120,10 @@ pistol = pygame.image.load("pistol.png")
 pistol = pygame.transform.scale(pistol, (20, 18))
 rifle = pygame.image.load("rifle.png")
 rifle = pygame.transform.scale(rifle, (45, 18))
+health = pygame.image.load("healthpowerup.png")
+health = pygame.transform.scale(health, (35, 20))
+ammo = pygame.image.load("ammopowerup.png")
+ammo = pygame.transform.scale(ammo, (20, 30))
 
 # Fonts
 font = pygame.font.Font(None, 50)
@@ -261,6 +267,12 @@ class Pickups(pygame.sprite.Sprite):
         elif gunnum == 2:
             self.image = rifle
             self.type = "rifle"
+        elif gunnum == 3:
+            self.image = health
+            self.type = "health"
+        elif gunnum == 4:
+            self.image = ammo
+            self.type = "ammo"
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = xpos
@@ -651,41 +663,41 @@ def spawnpickups(map):
     for item in pickups_sprite_list:
         item.kill()
     if map == "1":
-        gunnum = random.randrange(0, 3)
+        gunnum = random.randrange(0, 5)
         spawn1 = Pickups(490, 625, gunnum)
         all_sprites_list.add(spawn1)
         pickups_sprite_list.add(spawn1)
-        gunnum = random.randrange(0, 3)
+        gunnum = random.randrange(0, 5)
         spawn2 = Pickups(490, 425, gunnum)
         all_sprites_list.add(spawn2)
         pickups_sprite_list.add(spawn2)
-        gunnum = random.randrange(0, 3)
+        gunnum = random.randrange(0, 5)
         spawn3 = Pickups(190, 325, gunnum)
         all_sprites_list.add(spawn3)
         pickups_sprite_list.add(spawn3)
-        gunnum = random.randrange(0, 3)
+        gunnum = random.randrange(0, 5)
         spawn4 = Pickups(790, 325, gunnum)
         all_sprites_list.add(spawn4)
         pickups_sprite_list.add(spawn4)
 
     if map == "2":
-        gunnum = random.randrange(0, 3)
+        gunnum = random.randrange(0, 5)
         spawn1 = Pickups(150, 225, gunnum)
         all_sprites_list.add(spawn1)
         pickups_sprite_list.add(spawn1)
-        gunnum = random.randrange(0, 3)
+        gunnum = random.randrange(0, 5)
         spawn2 = Pickups(850, 225, gunnum)
         all_sprites_list.add(spawn2)
         pickups_sprite_list.add(spawn2)
-        gunnum = random.randrange(0, 3)
+        gunnum = random.randrange(0, 5)
         spawn3 = Pickups(665, 325, gunnum)
         all_sprites_list.add(spawn3)
         pickups_sprite_list.add(spawn3)
-        gunnum = random.randrange(0, 3)
+        gunnum = random.randrange(0, 5)
         spawn4 = Pickups(160, 425, gunnum)
         all_sprites_list.add(spawn4)
         pickups_sprite_list.add(spawn4)
-        gunnum = random.randrange(0, 3)
+        gunnum = random.randrange(0, 5)
         spawn5 = Pickups(490, 625, gunnum)
         all_sprites_list.add(spawn5)
         pickups_sprite_list.add(spawn5)
@@ -722,6 +734,7 @@ Leveltimer = 0
 score = 0
 Mapselect = True
 rifleshoot = 0
+rifleshootP2 = 0
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
@@ -1271,6 +1284,32 @@ while not done:
                             player2.uncrouching = False
                             # To readjust the sprite when the player stops shooting.21
                             player2.crouching = True
+
+                        if player2.gun == "rifle" and player2.ammo > 0 and rifleshootP2 == 0:
+                            player2.ammo -= 1
+                            x = random.randrange(0, 2)
+                            spread = random.randrange(2, 30)
+                            # Generate the amount of spread
+                            if x == 1:
+                                Ydirection = True
+                            else:
+                                Ydirection = False
+                            if player2.direction == "right":
+                                # Coords adjusted a bit so that the bullet dies not collide with the player and dissapear straight away once created
+                                bullet = Bullet((player2.rect.x + 55), (player2.rect.y + 9), spread, Ydirection)
+                                bullet.direction = "right"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            elif player2.direction == "left":
+                                bullet = Bullet(player2.rect.x - 12, player2.rect.y + 9, spread, Ydirection)
+                                bullet.direction = "left"
+                                all_sprites_list.add(bullet)
+                                bullet_sprite_list.add(bullet)
+                            bullet.gun = "rifle"
+
+                        rifleshootP2 += 1
+                        if rifleshootP2 == 2:
+                            rifleshootP2 = 0
                     elif event.key == pygame.K_q:
                         pickup_player_contact = pygame.sprite.spritecollide(player2, pickups_sprite_list, False)
                         for gun in pickup_player_contact:
