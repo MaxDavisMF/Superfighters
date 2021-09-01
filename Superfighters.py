@@ -29,6 +29,10 @@ background_image2 = pygame.image.load("Darkcitybackground.png").convert()
 background_image2 = pygame.transform.scale(background_image2, (1000, 750))
 background_image3 = pygame.image.load("Spacebackground.png").convert()
 background_image3 = pygame.transform.scale(background_image3, (1000, 750))
+background_image4 = pygame.image.load("Level2background.png").convert()
+background_image4 = pygame.transform.scale(background_image4, (1000, 750))
+background_image5 = pygame.image.load("Level3citybackground.png").convert()
+background_image5 = pygame.transform.scale(background_image5, (1000, 750))
 
 Ladderimage = pygame.image.load("Laddersprite.png").convert()
 Ladderimage = pygame.transform.scale(Ladderimage, (40, 100))
@@ -1034,7 +1038,14 @@ while not done:
                 for sprite in floors:
                     if sprite.rect.x < -300:
                         sprite.kill()
-                screen.blit(background_image1, (0, 0))
+                if Level == "1":
+                    screen.blit(background_image1, (0, 0))
+                if Level == "2":
+                    screen.blit(background_image4, (0, 0))
+                if Level == "3":
+                    screen.blit(background_image5, (0, 0))
+
+
                 drawstatsSP()
                 player1.update(timer)
 
