@@ -319,6 +319,7 @@ class Player(pygame.sprite.Sprite):
         self.lives = 3
         self.climbing = False
         self.movingplatform = None
+        self.timer = 0
 
     def update(self, timer):
         if self.shooting == False:
@@ -328,7 +329,9 @@ class Player(pygame.sprite.Sprite):
             self.rect.x = self.rect.x + self.speedx
             # Walking animation
             if self.state == "walk" and self.supported == True:
-                if timer % 3 == 0:
+                self.timer += 1
+                if self.timer == 3:
+                    self.timer = 0
                     self.walkanimationnum += 1
                     if self.walkanimationnum == 2:
                         self.walkanimationnum = 0
