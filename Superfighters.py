@@ -47,6 +47,9 @@ player_still_image_right_red = pygame.transform.scale(player_still_image_right_r
 player_still_image_left_red = pygame.image.load("standleft_1red.png")
 player_still_image_left_red = pygame.transform.scale(player_still_image_left_red, (37, 63))
 
+player_still_image_left_green = pygame.image.load("standleft_1green.png")
+player_still_image_left_green = pygame.transform.scale(player_still_image_left_green, (37, 63))
+
 player_walk_right1 = pygame.image.load("walkright_1.png")
 player_walk_right1 = pygame.transform.scale(player_walk_right1, (42, 63))
 # player_walk_right2 = pygame.image.load("walkright_2.png")
@@ -69,6 +72,12 @@ player_walk_left1_red = pygame.transform.scale(player_walk_left1_red, (42, 63))
 player_walk_left3_red = pygame.image.load("walkleft_3red.png")
 player_walk_left3_red = pygame.transform.scale(player_walk_left3_red, (42, 63))
 
+
+player_walk_left1_green = pygame.image.load("walkleft_1green.png")
+player_walk_left1_green = pygame.transform.scale(player_walk_left1_green, (42, 63))
+player_walk_left3_green = pygame.image.load("walkleft_3green.png")
+player_walk_left3_green = pygame.transform.scale(player_walk_left3_green, (42, 63))
+
 player_jump_right = pygame.image.load("jumpright.png")
 player_jump_right = pygame.transform.scale(player_jump_right, (42, 63))
 player_jump_left = pygame.image.load("jumpleft.png")
@@ -78,6 +87,9 @@ player_jump_right_red = pygame.image.load("jumprightred.png")
 player_jump_right_red = pygame.transform.scale(player_jump_right_red, (42, 63))
 player_jump_left_red = pygame.image.load("jumpleftred.png")
 player_jump_left_red = pygame.transform.scale(player_jump_left_red, (42, 63))
+
+player_jump_left_green = pygame.image.load("jumpleftgreen.png")
+player_jump_left_green = pygame.transform.scale(player_jump_left_green, (42, 63))
 
 player_duck_left = pygame.image.load("duckleft.png")
 player_duck_left = pygame.transform.scale(player_duck_left, (33, 45))
@@ -137,6 +149,7 @@ walkright = [player_walk_right1, player_walk_right3]
 walkleft = [player_walk_left1, player_walk_left3]
 walkrightred = [player_walk_right1_red, player_walk_right3_red]
 walkleftred = [player_walk_left1_red, player_walk_left3_red]
+walkleftgreen = [player_walk_left1_green, player_walk_left3_green]
 # Load top scores
 L1 = open("L1highscore.txt", "r")
 L1topscore = (L1.read())
@@ -185,9 +198,16 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, ypos):
+    def __init__(self, ypos, colour):
         super().__init__()
-        self.image = player_still_image_left_red
+        if colour == 0:
+            self.colour = "red"
+        if colour == 1:
+            self.colour = "green"
+        if self.colour == "red":
+            self.image = player_still_image_left_red
+        elif self.colour == "green":
+            self.image = player_still_image_left_green
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = 1050
@@ -210,7 +230,6 @@ class Enemy(pygame.sprite.Sprite):
         self.timer = 0
 
     def update(self):
-        self.timer += 1
         self.rect.x += self.speedx
         if not self.supported:
             self.speedy += self.accy
@@ -231,12 +250,16 @@ class Enemy(pygame.sprite.Sprite):
                     self.rect.y = (floor.rect.y - 63)
 
         if self.jumping == False:
-            if self.timer % 10 == 0:
+            self.timer += 1
+            if self.timer == 15:
                 self.timer = 0
                 self.walkanimationnum += 1
                 if self.walkanimationnum == 2:
                     self.walkanimationnum = 0
-                self.image = walkleftred[self.walkanimationnum]
+                if self.colour == "red":
+                    self.image = walkleftred[self.walkanimationnum]
+                elif self.colour == "green":
+                    self.image = walkleftgreen[self.walkanimationnum]
             jump = random.randrange(0, 30)
             if Level == "1" or "2":
                 if player1.rect.y == self.rect.y:
@@ -256,7 +279,10 @@ class Enemy(pygame.sprite.Sprite):
                     self.speedy = -5.4
 
         else:
-            self.image = player_jump_left_red
+            if self.colour == "red":
+                self.image = player_jump_left_red
+            elif self.colour == "green":
+                self.image = player_jump_left_green
 
 
 class Pickups(pygame.sprite.Sprite):
@@ -332,6 +358,7 @@ class Player(pygame.sprite.Sprite):
                 self.timer += 1
                 if self.timer == 3:
                     self.timer = 0
+                    print(self.timer)
                     self.walkanimationnum += 1
                     if self.walkanimationnum == 2:
                         self.walkanimationnum = 0
@@ -1026,7 +1053,8 @@ while not done:
                 if Enemy_spawn_timer == 180:
                     Enemy_spawn_timer = 0
                     ypos = random.randrange(110, 600)
-                    enemy = Enemy(ypos)
+                    colour = random.randrange(0,1)
+                    enemy = Enemy(ypos, colour)
                     enemies.add(enemy)
                     all_sprites_list.add(enemy)
 
@@ -1073,21 +1101,21 @@ while not done:
                     L1.write(str(score))
                     L1.close()
                     L1topscore = str(score)
-                    score = 0
+
             if Level == "2":
                 if score > int(L2topscore):
                     L2 = open("L2highscore.txt", "w")
                     L2.write(str(score))
                     L2.close()
                     L2topscore = str(score)
-                    score = 0
+
             if Level == "3":
                 if score > int(L3topscore):
                     L3 = open("L3highscore.txt", "w")
                     L3.write(str(score))
                     L3.close()
                     L3topscore = str(score)
-                    score = 0
+            score = 0
 
 
             screen.fill(BLACK)
