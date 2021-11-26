@@ -1053,7 +1053,7 @@ while not done:
                 if Enemy_spawn_timer == 180:
                     Enemy_spawn_timer = 0
                     ypos = random.randrange(110, 600)
-                    colour = random.randrange(0,1)
+                    colour = random.randrange(0,2)
                     enemy = Enemy(ypos, colour)
                     enemies.add(enemy)
                     all_sprites_list.add(enemy)
