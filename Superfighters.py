@@ -795,6 +795,7 @@ score = 0
 Mapselect = True
 rifleshoot = 0
 rifleshootP2 = 0
+Musicplaying = False
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
@@ -805,8 +806,10 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
     if Menu or Levelselect or Mapselect:
-        pygame.mixer.music.load('Menu.mp3')
-        pygame.mixer.music.play(-1)
+        if Musicplaying == False:
+            pygame.mixer.music.load('Menu.mp3')
+            pygame.mixer.music.play(-1)
+            Musicplaying = True
     if Menu:
         if Setup:
             Setup = False
