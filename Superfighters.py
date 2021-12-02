@@ -810,6 +810,9 @@ while not done:
             pygame.mixer.music.load('Menu.mp3')
             pygame.mixer.music.play(-1)
             Musicplaying = True
+    else:
+        if Musicplaying == True:
+            pygame.mixer.music.stop()
     if Menu:
         if Setup:
             Setup = False
