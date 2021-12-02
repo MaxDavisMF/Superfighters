@@ -805,14 +805,17 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-    if Menu or Levelselect or Mapselect:
+    if Menu or (Singleplayer and Levelselect) or (Multiplayer and Mapselect):
         if Musicplaying == False:
             pygame.mixer.music.load('Menu.mp3')
             pygame.mixer.music.play(-1)
             Musicplaying = True
     else:
+        print("hi")
         if Musicplaying == True:
+            print("hello")
             pygame.mixer.music.stop()
+            Musicplaying = False
     if Menu:
         if Setup:
             Setup = False
@@ -1046,6 +1049,8 @@ while not done:
                                 all_sprites_list.add(bullet)
                                 bullet_sprite_list.add(bullet)
                             bullet.gun = player1.gun
+                            pygame.mixer.music.load('Pistolshot.mp3')
+                            pygame.mixer.music.play()
                         player1.shooting = False
                         if player1.wascrouched == True:
                             player1.rect.y += 18
