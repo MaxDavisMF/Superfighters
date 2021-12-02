@@ -21,8 +21,7 @@ pygame.init()
 size = (1000, 750)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Superfighters")
-# Sounds
-#Background_music = pygame.mixer.Sound("Menu.wav")
+
 
 # Images
 Menu_image = pygame.image.load("Home_screen_title.png").convert()
@@ -806,7 +805,7 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
     if Menu or Levelselect or Mapselect:
-        pygame.mixer.music.load('Menu.wav')
+        pygame.mixer.music.load('Menu.mp3')
         pygame.mixer.music.play(-1)
     if Menu:
         if Setup:
