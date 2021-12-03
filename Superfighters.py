@@ -1249,7 +1249,8 @@ while not done:
                                 all_sprites_list.add(bullet)
                                 bullet_sprite_list.add(bullet)
                             bullet.gun = "rifle"
-
+                            pygame.mixer.music.load('Rifleshot.mp3')
+                            pygame.mixer.music.play()
 
 
                         rifleshoot += 1
@@ -1318,9 +1319,13 @@ while not done:
                             if player1.gun == "pistol":
                                 pygame.mixer.music.load('Pistolshot.mp3')
                                 pygame.mixer.music.play()
+                                print("hi")
                             if player1.gun == "magnum":
                                 pygame.mixer.music.load('Magnumshot.mp3')
                                 pygame.mixer.music.play()
+                            if player1.gun == "rifle":
+                                print("hello")
+                                pygame.mixer.music.stop()
 
                         player1.shooting = False
                         if player1.wascrouched == True:
@@ -1393,6 +1398,8 @@ while not done:
                                 all_sprites_list.add(bullet)
                                 bullet_sprite_list.add(bullet)
                             bullet.gun = "rifle"
+                            pygame.mixer.music.load('Rifleshot.mp3')
+                            pygame.mixer.music.play()
 
                         rifleshootP2 += 1
                         if rifleshootP2 == 2:
@@ -1463,6 +1470,9 @@ while not done:
                             if player2.gun == "magnum":
                                 pygame.mixer.music.load('Magnumshot.mp3')
                                 pygame.mixer.music.play()
+                            if player1.gun == "rifle":
+                                pygame.mixer.music.stop()
+
                         player2.shooting = False
                         if player2.wascrouched == True:
                             if player2.crouching == True:
