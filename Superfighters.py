@@ -1292,6 +1292,10 @@ while not done:
                             player1.climbing = False
 
                     elif event.key == pygame.K_n:
+                        if player1.gun == "rifle":
+                            if player1.gun == "rifle":
+                                print("hello")
+                                pygame.mixer.music.stop()
                         if player1.aiming == True and player1.ammo > 0:
                             player1.ammo -= 1
                             player1.aiming = False
@@ -1323,9 +1327,7 @@ while not done:
                             if player1.gun == "magnum":
                                 pygame.mixer.music.load('Magnumshot.mp3')
                                 pygame.mixer.music.play()
-                            if player1.gun == "rifle":
-                                print("hello")
-                                pygame.mixer.music.stop()
+
 
                         player1.shooting = False
                         if player1.wascrouched == True:
