@@ -811,9 +811,7 @@ while not done:
             pygame.mixer.music.play(-1)
             Musicplaying = True
     else:
-        print("hi")
         if Musicplaying == True:
-            print("hello")
             pygame.mixer.music.stop()
             Musicplaying = False
     if Menu:
@@ -1316,6 +1314,14 @@ while not done:
                                 all_sprites_list.add(bullet)
                                 bullet_sprite_list.add(bullet)
                             bullet.gun = player1.gun
+                            # Shooting Sound
+                            if player1.gun == "pistol":
+                                pygame.mixer.music.load('Pistolshot.mp3')
+                                pygame.mixer.music.play()
+                            if player1.gun == "magnum":
+                                pygame.mixer.music.load('Magnumshot.mp3')
+                                pygame.mixer.music.play()
+
                         player1.shooting = False
                         if player1.wascrouched == True:
                             if player1.crouching == True:
@@ -1450,6 +1456,13 @@ while not done:
                                 all_sprites_list.add(bullet)
                                 bullet_sprite_list.add(bullet)
                             bullet.gun = player2.gun
+                            #Sound
+                            if player2.gun == "pistol":
+                                pygame.mixer.music.load('Pistolshot.mp3')
+                                pygame.mixer.music.play()
+                            if player2.gun == "magnum":
+                                pygame.mixer.music.load('Magnumshot.mp3')
+                                pygame.mixer.music.play()
                         player2.shooting = False
                         if player2.wascrouched == True:
                             if player2.crouching == True:
