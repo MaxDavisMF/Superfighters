@@ -1251,6 +1251,8 @@ while not done:
                             bullet.gun = "rifle"
                             pygame.mixer.music.load('Rifleshot.mp3')
                             pygame.mixer.music.play()
+                        if player1.gun == "rifle" and player1.ammo == 0:
+                            pygame.mixer.music.stop()
 
 
                         rifleshoot += 1
@@ -1323,7 +1325,6 @@ while not done:
                             if player1.gun == "pistol":
                                 pygame.mixer.music.load('Pistolshot.mp3')
                                 pygame.mixer.music.play()
-                                print("hi")
                             if player1.gun == "magnum":
                                 pygame.mixer.music.load('Magnumshot.mp3')
                                 pygame.mixer.music.play()
