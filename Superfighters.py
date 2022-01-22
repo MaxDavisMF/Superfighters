@@ -418,11 +418,11 @@ class Player(pygame.sprite.Sprite):
                         self.supported = True
                         # + 63 to adjust for player height
                         self.rect.y = (floor.rect.y - 63)
-                    if floor == Movingsoftfloor:
-                        print("hi")
-                        if floor.direction == "left":
+                    if floor.type == "moving":
+                        print("5")
+                        if floor.currentdirection == "left":
                             self.rect.x -= 2
-                        elif floor.direction == "right":
+                        elif floor.currentdirection == "right":
                             self.rect.x += 2
             # Set self.supported to true so that the player moves up the ladder instead of instantly falling back down
             if self.state == "climb":
@@ -485,6 +485,7 @@ class Hardfloor(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = xcoord
         self.rect.y = ycoord
+        self.type = "still"
 
 
 class Softfloor(pygame.sprite.Sprite):
@@ -495,6 +496,7 @@ class Softfloor(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = xcoord
         self.rect.y = ycoord
+        self.type = "still"
 
 class Movingsoftfloor(pygame.sprite.Sprite):
     def __init__(self, xsize, xcoord, ycoord, direction, parameter1, parameter2, startdirection):
@@ -514,6 +516,7 @@ class Movingsoftfloor(pygame.sprite.Sprite):
         self.parameter1 = parameter1
         self.parameter2 = parameter2
         self.currentdirection = startdirection
+        self.type = "moving"
 #Check if this works
     def update(self):
             if self.currentdirection == "right":
