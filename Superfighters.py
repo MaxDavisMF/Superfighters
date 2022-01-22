@@ -401,7 +401,7 @@ class Player(pygame.sprite.Sprite):
                 self.supported = False
             if player_floor_collision_list:
                 for floor in player_floor_collision_list:
-                    if floor.type == "moving":
+                    if floor.type == "moving" and self.rect.y < (floor.rect.y - 61):
                         if floor.currentdirection == "left":
                             self.rect.x -= 2
                         elif floor.currentdirection == "right":
