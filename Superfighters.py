@@ -418,7 +418,12 @@ class Player(pygame.sprite.Sprite):
                         self.supported = True
                         # + 63 to adjust for player height
                         self.rect.y = (floor.rect.y - 63)
-
+                    if floor == Movingsoftfloor:
+                        print("hi")
+                        if floor.direction == "left":
+                            self.rect.x -= 2
+                        elif floor.direction == "right":
+                            self.rect.x += 2
             # Set self.supported to true so that the player moves up the ladder instead of instantly falling back down
             if self.state == "climb":
                 self.supported = True
@@ -501,8 +506,8 @@ class Movingsoftfloor(pygame.sprite.Sprite):
         self.rect.y = ycoord
         self.moving = False
         self.direction = direction
-        # These parameters are the coords that the platform will move between. The following code ensures that parameter 1 is the larger coord
-        if parameter1 < parameter2:
+        # These parameters are the coords that the platform will move between. The following code ensures that parameter 1 is the smaller coord
+        if parameter1 > parameter2:
             Temp = parameter1
             parameter1 = parameter2
             parameter2 = Temp
