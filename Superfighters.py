@@ -502,7 +502,7 @@ class Movingsoftfloor(pygame.sprite.Sprite):
         self.moving = False
         self.direction = direction
         # These parameters are the coords that the platform will move between. The following code ensures that parameter 1 is the larger coord
-        if parameter1 > parameter2:
+        if parameter1 < parameter2:
             Temp = parameter1
             parameter1 = parameter2
             parameter2 = Temp
