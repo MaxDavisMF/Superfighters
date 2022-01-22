@@ -399,6 +399,13 @@ class Player(pygame.sprite.Sprite):
             # If it has and player was falling, stop falling and place player on top of floor
             if not player_floor_collision_list:
                 self.supported = False
+            if player_floor_collision_list:
+                for floor in player_floor_collision_list:
+                    if floor.type == "moving":
+                        if floor.currentdirection == "left":
+                            self.rect.x -= 2
+                        elif floor.currentdirection == "right":
+                            self.rect.x += 2
             if player_floor_collision_list and self.speedy > 0:
                 for floor in player_floor_collision_list:
                     # This checks that the player is sufficiently high to "land" on the platform, so that he does not
@@ -418,12 +425,8 @@ class Player(pygame.sprite.Sprite):
                         self.supported = True
                         # + 63 to adjust for player height
                         self.rect.y = (floor.rect.y - 63)
-                    if floor.type == "moving":
-                        print("5")
-                        if floor.currentdirection == "left":
-                            self.rect.x -= 2
-                        elif floor.currentdirection == "right":
-                            self.rect.x += 2
+                        if floor.type == "moving":
+                            self.rect.y += 1
             # Set self.supported to true so that the player moves up the ladder instead of instantly falling back down
             if self.state == "climb":
                 self.supported = True
